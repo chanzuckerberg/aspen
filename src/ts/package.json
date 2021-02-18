@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@babel/core": "7.12.3",
+    "@material-ui/styles": "^4.11.3",
     "@svgr/webpack": "5.4.0",
     "@types/classnames": "^2.2.11",
     "@types/lodash": "^4.14.168",

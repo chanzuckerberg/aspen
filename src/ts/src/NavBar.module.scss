@@ -1,15 +1,17 @@
-@import "common/styles/mixins.scss";
-
-.navbar {
-    background-color: var(--primary);
-    min-height: 50px;
+.menu {
+    padding-left: 1em;
 }
 
-.titleLink {
-    color: var(--white);
+.user {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.3em;
+    font-weight: normal;
+    letter-spacing: 0.1em;
+    fill: white;
+}
 
-    &:hover {
-        text-decoration: none;
-        color: var(--white);
-    }
+.verticalLine {
+    border-left: 0.1em solid white;
+    height: auto;
+    margin: 0.5em 0 0.5em 0;
 }

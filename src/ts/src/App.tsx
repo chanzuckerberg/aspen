@@ -1,26 +1,34 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { CZUI } from "cz-ui";
+import { Container } from "semantic-ui-react";
 
+import Data from "data";
 import Upload from "upload";
 
 import Landing from "Landing";
 import NavBar from "NavBar";
 
-import "App.scss";
+import style from "App.module.scss";
 
-export default function App(): JSX.Element {
+type Props = {};
+
+const App: FunctionComponent<Props> = ({ children }) => {
     return (
         <Router>
-            <div className="App">
-                <CZUI>
-                    <NavBar />
+            <div className={style.app}>
+                <div className={style.navBar}>
+                    <NavBar user="Santa Clara County"/>
+                </div>
+                <div className={style.view}>
                     <Switch>
+                        <Route path="/data" render={() => <Data />} />
                         <Route path="/upload" render={() => <Upload />} />
                         <Route path="/" render={() => <Landing />} />
                     </Switch>
-                </CZUI>
+                </div>
             </div>
         </Router>
     );
 }
+
+export default App;

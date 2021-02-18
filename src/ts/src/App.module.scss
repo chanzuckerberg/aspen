@@ -1,0 +1,14 @@
+.app {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+
+    .navBar {
+
+    }
+
+    // TODO: Find better way to work with NavBar
+    .view {
+        margin: 4em 0em 4em 0em;
+    }
+}

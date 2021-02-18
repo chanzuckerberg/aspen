@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+// Legacy
+$font-family-components: "Open Sans", Arial, Helvetica, sans-serif !default;
+$font-family-accent: "Open Sans", serif !default;
+$font-size-components: 13px !default;
+$font-weight-components: 13px !default;
+$line-height-components: 18px !default;
+$letter-spacing-components: 0.4px !default;
+
+// Accent
+$font-family-accent: "Open Sans", serif !default;
+$font-style-accent: normal !default;
+$font-weight-accent: bold !default;
+$letter-spacing-accent: 0.3px !default;
+
+$font-size-accent-l: 52px !default;
+$line-height-accent-l: 58px !default;
+$font-size-accent-m: 36px !default;
+$line-height-accent-m: 44px !default;
+$font-size-accent-s: 20px !default;
+$line-height-accent-s: 28px !default;
+
+// Header
+$font-family-header: "Open Sans", Arial, Helvetica, sans-serif !default;
+$font-style-header: normal !default;
+$font-weight-header: 500 !default;
+$letter-spacing-header: 0.3px !default;
+
+$font-size-header-xl: 32px !default;
+$line-height-header-xl: 34px !default;
+$font-size-header-l: 22px !default;
+$line-height-header-l: 26px !default;
+$font-size-header-m: 18px !default;
+$line-height-header-m: 22px !default;
+$font-size-header-s: 14px !default;
+$line-height-header-s: 18px !default;
+$font-size-header-xs: 12px !default;
+$line-height-header-xs: 16px !default;
+
+// Body
+$font-family-body: "Open Sans", Arial, Helvetica, sans-serif !default;
+$font-style-body: normal !default;
+$font-weight-body: normal !default;
+$letter-spacing-body: 0.4px !default;
+
+$font-size-body-xl: 18px !default;
+$line-height-body-xl: 24px !default;
+$font-size-body-l: 16px !default;
+$line-height-body-l: 22px !default;
+$font-size-body-m: 14px !default;
+$line-height-body-m: 20px !default;
+$font-size-body-s: 13px !default;
+$line-height-body-s: 18px !default;
+$font-size-body-xs: 12px !default;
+$line-height-body-xs: 16px !default;

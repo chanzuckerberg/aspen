@@ -16,6 +16,15 @@ type Project = {
 
 type Sample = {
     id: number;
+    privateId: string;
+    publicId: string;
+    uploadDate: string;
+    collectionDate: string;
+    collectionLocation: string;
+    gisaid?: string;
+};
+
+type Tree = {
+    id: number;
     name: string;
-    host_genome_id: number;
 };

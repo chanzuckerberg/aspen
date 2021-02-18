@@ -1,0 +1,22 @@
+// Primary Colors
+$primary: #000000 !default;
+$primary-dark: darken($primary, 10%) !default;
+$primary-light: lighten($primary, 36%) !default;
+
+// Accent Colors
+$accent-dark: #1C7F28 !default;
+$accent-medium: #3867FA !default;
+$accent-light: #FFFFFF !default;
+
+// Grays
+$gray-medium: #999999 !default;
+$black: darken($gray-medium, 100%) !default;
+$gray-darkest: darken($gray-medium, 36%) !default;
+$gray-dark: darken($gray-medium, 24%) !default;
+$gray-light: lighten($gray-medium, 16%) !default;
+$gray-lightest: lighten($gray-medium, 30%) !default;
+$gray-off-white: lighten($gray-medium, 36%) !default;
+$white: lighten($gray-medium, 100%) !default;
+
+// Overlay
+$overlay: rgba(0, 0, 0, 0.3) !default;

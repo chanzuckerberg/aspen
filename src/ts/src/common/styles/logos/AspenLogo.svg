@@ -1,0 +1,13 @@
+<svg viewbox="0 -10 40 10" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+        text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1em;
+            font-weight: lighter;
+            font-stretch: expanded;
+            fill: white;
+        }
+    </style>
+    <text x="0" y="0" textLength="100%" >ASPEN</text>
+</svg>
