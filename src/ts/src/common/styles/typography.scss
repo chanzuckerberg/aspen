@@ -1,56 +1,147 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap');
 
-// Legacy
-$font-family-components: "Open Sans", Arial, Helvetica, sans-serif !default;
-$font-family-accent: "Open Sans", serif !default;
-$font-size-components: 0.813em !default;
-$font-weight-components: 0.813em !default;
-$line-height-components: 1.125em !default;
-$letter-spacing-components: 0.025em !default;
+// font families
+$font-family-primary: "Open Sans", "Helvetica Neue", Arial, Helvetica,
+  sans-serif !default;
+$font-family-code: "Andale Mono", Menlo, Monaco, Consolas, "Courier New",
+  monospace !default;
 
-// Accent
-$font-family-accent: "Open Sans", serif !default;
-$font-style-accent: normal !default;
-$font-weight-accent: bold !default;
-$letter-spacing-accent: 0.019em !default;
+// Font Weights
+$font-weight-thin: 300;
+$font-weight-regular: 400;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-heavy: 800;
 
-$font-size-accent-l: 3.25em !default;
-$line-height-accent-l: 3.625em !default;
-$font-size-accent-m: 2.25em !default;
-$line-height-accent-m: 2.75em !default;
-$font-size-accent-s: 1.25em !default;
-$line-height-accent-s: 1.75em !default;
+// Typography Sizes
+// Headers
+@mixin font-header-xxl {
+  font-size: 1.625em;
+  line-height: 2.125em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.01875em;
+}
 
-// Header
-$font-family-header: "Open Sans", Arial, Helvetica, sans-serif !default;
-$font-style-header: normal !default;
-$font-weight-header: 500 !default;
-$letter-spacing-header: 0.019em !default;
+@mixin font-header-xl {
+  font-size: 1.375em;
+  line-height: 1.875em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.01875em;
+}
 
-$font-size-header-xl: 2em !default;
-$line-height-header-xl: 2.125em !default;
-$font-size-header-l: 1.375em !default;
-$line-height-header-l: 1.625em !default;
-$font-size-header-m: 1.125em !default;
-$line-height-header-m: 1.375em !default;
-$font-size-header-s: 0.875em !default;
-$line-height-header-s: 1.125em !default;
-$font-size-header-xs: 0.75em !default;
-$line-height-header-xs: 1em !default;
+@mixin font-header-l {
+  font-size: 1.125em;
+  line-height: 1.5em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.01875em;
+}
+
+@mixin font-header-m {
+  font-size: 1em;
+  line-height: 1.375em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.01875em;
+}
+
+@mixin font-header-s {
+  font-size: 0.875em;
+  line-height: 1.25em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.01875em;
+}
+
+@mixin font-header-xs {
+  font-size: 0.8125em;
+  line-height: 1.125em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.01875em;
+}
+
+@mixin font-header-xxs {
+  font-size: 0.75em;
+  line-height: 1.125em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.01875em;
+}
+
+@mixin font-header-xxxs {
+  font-size: 0.6875em;
+  line-height: 1em;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.01875em;
+}
 
 // Body
-$font-family-body: "Open Sans", Arial, Helvetica, sans-serif !default;
-$font-style-body: normal !default;
-$font-weight-body: normal !default;
-$letter-spacing-body: 0.025em !default;
+@mixin font-body-l {
+  font-size: 1.125em;
+  line-height: 1.75em;
+  letter-spacing: 0.01875em;
+  font-weight: $font-weight-regular;
+}
 
-$font-size-body-xl: 1.125em !default;
-$line-height-body-xl: 1.5em !default;
-$font-size-body-l: 1em !default;
-$line-height-body-l: 1.375em !default;
-$font-size-body-m: 0.875em !default;
-$line-height-body-m: 1.25em !default;
-$font-size-body-s: 0.813em !default;
-$line-height-body-s: 1.125em !default;
-$font-size-body-xs: 0.75em !default;
-$line-height-body-xs: 1em !default;
+@mixin font-body-m {
+  font-size: 1em;
+  line-height: 1.625em;
+  letter-spacing: 0.01875em;
+  font-weight: $font-weight-regular;
+}
+
+@mixin font-body-s {
+  font-size: 0.875em;
+  line-height: 1.5em;
+  letter-spacing: 0.01875em;
+  font-weight: $font-weight-regular;
+}
+
+@mixin font-body-xs {
+  font-size: 0.8125em;
+  line-height: 1.25em;
+  letter-spacing: 0.01875em;
+  font-weight: $font-weight-regular;
+}
+
+@mixin font-body-xxs {
+  font-size: 0.75em;
+  line-height: 1.125em;
+  letter-spacing: 0.01875em;
+  font-weight: $font-weight-regular;
+}
+
+@mixin font-body-xxxs {
+  font-size: 0.6875em;
+  line-height: 1em;
+  letter-spacing: 0.01875em;
+  font-weight: $font-weight-regular;
+}
+
+// Code (Mixin)
+@mixin font-code {
+  font-family: $font-family-monospace;
+  font-size: 0.8125em;
+  line-height: 1em;
+}
+
+// All-Caps
+@mixin font-caps-xxs {
+  font-size: 0.75em;
+  line-height: 1.125em;
+  letter-spacing: 0.0625em;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+}
+
+@mixin font-caps-xxxs {
+  font-size: 0.6875em;
+  line-height: 1em;
+  letter-spacing: 0.0625em;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+}
+
+@mixin font-caps-xxxxs {
+  font-size: 10px;
+  line-height: 0.875em;
+  letter-spacing: 0.0625em;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+}

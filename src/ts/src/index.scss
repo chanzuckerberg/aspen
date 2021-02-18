@@ -1,11 +1,3 @@
-@import "common/styles/theme.scss";
-
-:root {
-    @include theme-colors;
-    @include theme-elements;
-    @include theme-typography;
-}
-
 // Override some browser CSS defaults with better defaults.
 body {
     margin: 0;

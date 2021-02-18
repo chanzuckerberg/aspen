@@ -1,22 +1,61 @@
 // Primary Colors
-$primary: #000000 !default;
-$primary-dark: darken($primary, 10%) !default;
-$primary-light: lighten($primary, 36%) !default;
+$primary-darkest: #223f9c;
+$primary-dark: #2b52cd;
+$primary: #3867fa;
+$primary-light: #a9bdfc;
+$primary-lightest: #eff2fc;
+$primary-off-white: #f8f9fe;
 
-// Accent Colors
-$accent-dark: #1C7F28 !default;
-$accent-medium: #3867FA !default;
-$accent-light: #FFFFFF !default;
+$black: #000000;
+$gray-darkest: #545454;
+$gray-dark: #767676;
+$gray-medium: #999999;
+$gray-light: #cccccc;
+$gray-lightest: #eaeaea;
+$gray-off-white: #f8f8f8;
+$white: #ffffff;
 
-// Grays
-$gray-medium: #999999 !default;
-$black: darken($gray-medium, 100%) !default;
-$gray-darkest: darken($gray-medium, 36%) !default;
-$gray-dark: darken($gray-medium, 24%) !default;
-$gray-light: lighten($gray-medium, 16%) !default;
-$gray-lightest: lighten($gray-medium, 30%) !default;
-$gray-off-white: lighten($gray-medium, 36%) !default;
-$white: lighten($gray-medium, 100%) !default;
+$secondary: #9bc74e;
 
-// Overlay
-$overlay: rgba(0, 0, 0, 0.3) !default;
+// Feedback Colors
+$info-dark: $primary-darkest;
+$info-medium: $primary;
+$info-light: #e7eaf4;
+$info-lightest: #ebeffc;
+$info-off-white: $primary-lightest;
+
+$success-dark: #1c7f48;
+$success-medium: #3cb371;
+$success-light: #e4ede8;
+$success-lightest: #e6f7ed;
+$success-off-white: #ecf5f0;
+
+$warning-dark: #946314;
+$warning-medium: #f5a623;
+$warning-light: #f4eee4;
+$warning-lightest: #fff3e1;
+$warning-off-white: #fcf6ec;
+
+$error-dark: #b70016;
+$error-medium: #dc132c;
+$error-light: #f2e4e4;
+$error-lightest: #fbe8e8;
+$error-off-white: #fef2f2;
+
+$beta-dark: #693bac;
+$beta-medium: #7a41ce;
+$beta-light: #ece8f1;
+$beta-lightest: #f0ebf6;
+$beta-off-white: #f4f0f9;
+
+// Categorical Colors; Just a reference
+// A scale with these colors
+// #482778
+// #1F968B
+// #55C567
+// #BF1464
+// #E58740
+// #AB4ECC
+
+// Sequential Colors; refer to design system
+// or to D3's "YlOrRd" scale
