@@ -3,54 +3,54 @@
 // Legacy
 $font-family-components: "Open Sans", Arial, Helvetica, sans-serif !default;
 $font-family-accent: "Open Sans", serif !default;
-$font-size-components: 13px !default;
-$font-weight-components: 13px !default;
-$line-height-components: 18px !default;
-$letter-spacing-components: 0.4px !default;
+$font-size-components: 0.813em !default;
+$font-weight-components: 0.813em !default;
+$line-height-components: 1.125em !default;
+$letter-spacing-components: 0.025em !default;
 
 // Accent
 $font-family-accent: "Open Sans", serif !default;
 $font-style-accent: normal !default;
 $font-weight-accent: bold !default;
-$letter-spacing-accent: 0.3px !default;
+$letter-spacing-accent: 0.019em !default;
 
-$font-size-accent-l: 52px !default;
-$line-height-accent-l: 58px !default;
-$font-size-accent-m: 36px !default;
-$line-height-accent-m: 44px !default;
-$font-size-accent-s: 20px !default;
-$line-height-accent-s: 28px !default;
+$font-size-accent-l: 3.25em !default;
+$line-height-accent-l: 3.625em !default;
+$font-size-accent-m: 2.25em !default;
+$line-height-accent-m: 2.75em !default;
+$font-size-accent-s: 1.25em !default;
+$line-height-accent-s: 1.75em !default;
 
 // Header
 $font-family-header: "Open Sans", Arial, Helvetica, sans-serif !default;
 $font-style-header: normal !default;
 $font-weight-header: 500 !default;
-$letter-spacing-header: 0.3px !default;
+$letter-spacing-header: 0.019em !default;
 
-$font-size-header-xl: 32px !default;
-$line-height-header-xl: 34px !default;
-$font-size-header-l: 22px !default;
-$line-height-header-l: 26px !default;
-$font-size-header-m: 18px !default;
-$line-height-header-m: 22px !default;
-$font-size-header-s: 14px !default;
-$line-height-header-s: 18px !default;
-$font-size-header-xs: 12px !default;
-$line-height-header-xs: 16px !default;
+$font-size-header-xl: 2em !default;
+$line-height-header-xl: 2.125em !default;
+$font-size-header-l: 1.375em !default;
+$line-height-header-l: 1.625em !default;
+$font-size-header-m: 1.125em !default;
+$line-height-header-m: 1.375em !default;
+$font-size-header-s: 0.875em !default;
+$line-height-header-s: 1.125em !default;
+$font-size-header-xs: 0.75em !default;
+$line-height-header-xs: 1em !default;
 
 // Body
 $font-family-body: "Open Sans", Arial, Helvetica, sans-serif !default;
 $font-style-body: normal !default;
 $font-weight-body: normal !default;
-$letter-spacing-body: 0.4px !default;
+$letter-spacing-body: 0.025em !default;
 
-$font-size-body-xl: 18px !default;
-$line-height-body-xl: 24px !default;
-$font-size-body-l: 16px !default;
-$line-height-body-l: 22px !default;
-$font-size-body-m: 14px !default;
-$line-height-body-m: 20px !default;
-$font-size-body-s: 13px !default;
-$line-height-body-s: 18px !default;
-$font-size-body-xs: 12px !default;
-$line-height-body-xs: 16px !default;
+$font-size-body-xl: 1.125em !default;
+$line-height-body-xl: 1.5em !default;
+$font-size-body-l: 1em !default;
+$line-height-body-l: 1.375em !default;
+$font-size-body-m: 0.875em !default;
+$line-height-body-m: 1.25em !default;
+$font-size-body-s: 0.813em !default;
+$line-height-body-s: 1.125em !default;
+$font-size-body-xs: 0.75em !default;
+$line-height-body-xs: 1em !default;

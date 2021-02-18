@@ -2,7 +2,6 @@ import React, { FunctionComponent } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 
-import Data from "data";
 import Upload from "upload";
 
 import Landing from "Landing";
@@ -21,7 +20,6 @@ const App: FunctionComponent<Props> = ({ children }) => {
                 </div>
                 <div className={style.view}>
                     <Switch>
-                        <Route path="/data" render={() => <Data />} />
                         <Route path="/upload" render={() => <Upload />} />
                         <Route path="/" render={() => <Landing />} />
                     </Switch>

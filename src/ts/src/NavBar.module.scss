@@ -1,17 +1,17 @@
 .menu {
-    padding-left: 1em;
-}
+    padding-left: var(--space-xl);
 
-.user {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1.3em;
-    font-weight: normal;
-    letter-spacing: 0.1em;
-    fill: white;
-}
+    .user {
+        font-family: 'Open Sans', sans-serif;
+        font-size: var(--font-size-header-m);
+        font-weight: var(--font-weight-header);
+        letter-spacing: var(--letter-spacing-header);
+        fill: var(--white);
+    }
 
-.verticalLine {
-    border-left: 0.1em solid white;
-    height: auto;
-    margin: 0.5em 0 0.5em 0;
+    .verticalLine {
+        border-left: 0.1em solid white;
+        height: auto;
+        margin: 0.5em 0 0.5em 0;
+    }
 }
