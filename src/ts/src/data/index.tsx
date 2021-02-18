@@ -2,14 +2,37 @@ import React, { FunctionComponent } from "react";
 import { Switch, Route, Link } from "react-router-dom";
 import { Menu, Search, Container } from "semantic-ui-react";
 
+import Samples from "./samples";
+
 import style from "./index.module.scss";
+
+const dummySamples: Array<Sample> = [
+    {
+        id: 1,
+        privateId: "0865-0004KGK00-001",
+        publicId: "0909EEEE-55-33",
+        uploadDate: "2/1/2021",
+        collectionDate: "12/12/2020",
+        collectionLocation: "Santa Clara County",
+        gisaid: "Accepted",
+    },
+    {
+        id: 2,
+        privateId: "0865-0004KGK00-001",
+        publicId: "0909EEEE-55-33",
+        uploadDate: "2/1/2021",
+        collectionDate: "12/12/2020",
+        collectionLocation: "Santa Clara County",
+        gisaid: "Accepted",
+    }
+]
 
 type Props = {
     samples?: Array<Sample>;
     trees?: Array<Tree>;
 };
 
-const Data: FunctionComponent<Props> = ({ samples = [], trees = [], children }) => {
+const Data: FunctionComponent<Props> = ({ samples = dummySamples, trees = [] }) => {
     return (
         <div className={style.dataRoot}>
             <div className={style.navigation}>
@@ -41,7 +64,7 @@ const Data: FunctionComponent<Props> = ({ samples = [], trees = [], children }) 
             </div>
             <div className={style.view}>
                 <Switch>
-                    <Route path="/data/samples" render={() => <div>Samples</div>}/>
+                    <Route path="/data/samples" render={() => <Samples samples={samples}/>}/>
                     <Route path="/data/trees" render={() => <div>Phylogenetic Trees</div>}/>
                 </Switch>
             </div>

@@ -1,14 +1,14 @@
 .dataRoot {
     display: flex;
     flex-flow: column wrap;
-    align-content: flex-start;
+    justify-content: center;
     height: 100%;
 
     .navigation {
         width: 100%;
-        margin-bottom: 1em;
 
         .menu {
+            width: 100%;
             align-items: stretch;
             margin-left: 2em;
 
@@ -37,7 +37,7 @@
     }
 
     .view {
-        width: 100%;
+        margin: 1em 10em 1em 10em;
     }
 }
 
