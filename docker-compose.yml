@@ -1,0 +1,29 @@
+# keep
+version: '3.8'
+
+services:
+  frontend:
+    image: aspen-frontend
+    build:
+      context: ./src/ts
+      # args:
+        # - REACT_APP_SERVICES_HOST=/services/m
+    ports:
+      - 3000:80
+    networks:
+      - frontend
+      - backend
+
+  backend:
+    image: aspen-backend
+    build:
+      context: ./src/py
+    command: gunicorn --bind 0.0.0.0:5000 aspen.main
+    ports:
+        - 5000:5000
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:

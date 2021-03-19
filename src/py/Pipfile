@@ -13,6 +13,7 @@ pytz = "*"
 requests = "*"
 SQLAlchemy = "*"
 sqlalchemy-enum-tables = {editable = true, path = "./third-party/sqlalchemy-enum-tables"}
+gunicorn = "*"
 
 [dev-packages]
 alembic = "*"
@@ -29,7 +30,7 @@ pytest-xdist = "*"
 sqlalchemy-stubs = "*"
 tqdm = "*"
 auth0-python = "*"
-aspen = {editable = true, path = "./src/py"}
+aspen = {editable = true, path = "./"}
 
 [requires]
 python_version = "3.7"
