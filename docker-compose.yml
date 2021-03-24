@@ -26,8 +26,6 @@ services:
       BUILD_PATH: build
       API_URL: http://localhost:3000
       CHOKIDAR_USEPOLLING: 'true'
-    depends_on:
-      - backend
     ports:
       - "8000:8000"
     volumes:
@@ -78,9 +76,6 @@ services:
       args:
         - BUILDKIT_INLINE_CACHE=1
     restart: always
-    depends_on:
-      - database
-      - localstack
     environment:
       - PYTHONUNBUFFERED=1
       - RESTART_ON_FAILURE=yes
