@@ -129,6 +129,24 @@ services:
     volumes:
       - ./oauth/pkcs12:/tmp/pkcs12:ro
       - ./oauth:/tmp/config:ro
+  nextstrain:
+    image: "${DOCKER_REPO}aspen-nextstrain-errorhandler"
+    build:
+      context: docker/aspen-batch
+      cache_from:
+        - "${DOCKER_REPO}aspen-nextstrain:branch-main"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    command: ["sleep", "infinity"]
+  nextstrain-errorhandler:
+    image: "${DOCKER_REPO}aspen-nextstrain-errorhandler"
+    build:
+      context: docker/nextstrain-errorhandler
+      cache_from:
+        - "${DOCKER_REPO}aspen-nextstrain-errorhandler:branch-main"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    command: ["sleep", "infinity"]
 volumes:
   database:
   localstack:
