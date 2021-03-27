@@ -11,6 +11,7 @@ module stack {
   delete_protected    = false
   require_okta        = true
   stack_prefix        = "/${var.stack_name}"
+  sql_import_file     = "db_snapshots/dev_backup.sql"
 
   wait_for_steady_state = var.wait_for_steady_state
 }

@@ -233,9 +233,14 @@ class RemoteDatabaseConfig(Config):
         username = self.AWS_SECRET["DB"]["rw_username"]
         password = self.AWS_SECRET["DB"]["rw_password"]
 
-        rds = boto3.client("rds")
-        response = rds.describe_db_instances(DBInstanceIdentifier="aspen-db")
-        instance_info = response["DBInstances"][0]
-        instance_address = instance_info["Endpoint"]["Address"]
+        instance_address = None
+        try:
+            instance_address = self.AWS_SECRET["DB"]["address"]
+        except KeyError:
+            rds = boto3.client("rds")
+            response = rds.describe_db_instances(DBInstanceIdentifier="aspen-db")
+            instance_info = response["DBInstances"][0]
+            instance_address = instance_info["Endpoint"]["Address"]
         instance_port = instance_info["Endpoint"]["Port"]
-        return f"postgresql://{username}:{password}@{instance_address}:{instance_port}/aspen_db"
+        db_name = os.getenv("RDEV_PREFIX", 'aspen_db')
+        return f"postgresql://{username}:{password}@{instance_address}:{instance_port}/{db_name}"

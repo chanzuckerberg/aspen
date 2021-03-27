@@ -13,6 +13,10 @@ resource aws_batch_job_definition batch_job_def {
   "memory": 28000,
   "environment": [
     {
+      "name": "DEPLOYMENT_ENVIRONMENT",
+      "value": "${var.deployment_stage}"
+    },
+    {
       "name": "DEPLOYMENT_STAGE",
       "value": "${var.deployment_stage}"
     },

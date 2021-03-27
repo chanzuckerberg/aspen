@@ -14,6 +14,7 @@ requests = "*"
 SQLAlchemy = "*"
 flask-cors = "*"
 sqlalchemy-enum-tables = {editable = true, path = "./third-party/sqlalchemy-enum-tables"}
+SQLAlchemy-Utils = "0.36.8"
 
 [dev-packages]
 alembic = "*"

@@ -79,7 +79,7 @@ variable path {
 
 variable cmd {
   type        = list(string)
-  description = "The path to register with the Application Load Balancer"
+  description = "Command to run in tasks"
   default     = []
 }
 

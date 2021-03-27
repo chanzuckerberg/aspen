@@ -16,11 +16,12 @@ locals {
   remote_dev_prefix     = var.stack_prefix
   wait_for_steady_state = var.wait_for_steady_state
 
-  migration_cmd         = ["sleep", "10"] # TODO, need amigration command
-  deletion_cmd          = ["sleep", "10"] # TODO, need a deletion command
-  frontend_cmd          = []
+  migration_cmd         = ["sleep", "9000"] # TODO, need amigration command
+  deletion_cmd          = ["sleep", "9000"] # TODO, need a deletion command
   backend_cmd           = []
-  data_load_path        = "s3://${local.secret["s3_buckets"]["aspen"]["name"]}/database/dev_data.sql"
+  frontend_cmd          = ["npm", "run", "serve"]
+  nextstrain_cmd        = ""
+  data_load_path        = length(var.sql_import_file) > 0 ? "${local.secret["s3_buckets"]["aspen"]["name"]}/${var.sql_import_file}" : ""
 
   vpc_id                = local.secret["vpc_id"]
   subnets               = local.secret["private_subnets"]
@@ -89,6 +90,7 @@ module frontend_service {
   security_groups       = local.security_groups
   task_role_arn         = local.ecs_role_arn
   service_port          = 3000
+  cmd                   = local.frontend_cmd
   deployment_stage      = local.deployment_stage
   step_function_arn     = module.nextstrain_sfn.step_function_arn
   host_match            = try(join(".", [module.frontend_dns[0].dns_prefix, local.external_dns]), "")
@@ -181,7 +183,7 @@ module nextstrain_batch {
   stack_resource_prefix = local.stack_resource_prefix
   image                 = "${local.nextstrain_image_repo}:${local.image_tag}"
   batch_role_arn        = local.batch_role_arn
-  cmd                   = ""
+  cmd                   = local.nextstrain_cmd
   custom_stack_name     = local.custom_stack_name
   remote_dev_prefix     = local.remote_dev_prefix
   deployment_stage      = local.deployment_stage

@@ -75,3 +75,9 @@ variable wait_for_steady_state {
   description = "Should terraform block until ECS services reach a steady state?"
   default     = false
 }
+
+variable sql_import_file {
+  type        = string
+  description = "Path to SQL file to import (for remote dev)"
+  default     = ""
+}

@@ -49,3 +49,17 @@ alembic-upgrade-head:
 alembic-autogenerate:
 	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
 
+.PHONY: init-db-cli
+init-db-cli:
+	pip install .
+
+.PHONY: db-migrations
+db-migrations: init-db-cli
+	if [ ! -z "${DATA_LOAD_PATH}" ]; then \
+		aspen-cli db --remote create --sql-file ${DATA_LOAD_PATH}; \
+	fi
+	alembic upgrade head
+
+.PHONY: db-drop:
+db-drop: init-db-cli
+	aspen-cli db --remote drop
