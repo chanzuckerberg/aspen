@@ -109,6 +109,12 @@ variable priority {
   description = "Listener rule priority number within the given listener"
 }
 
+variable health_check_path {
+  type        = string
+  description = "path to use for health checks"
+  default     = "/"
+}
+
 variable wait_for_steady_state {
   type        = bool
   description = "Whether Terraform should block until the service is in a steady state before exiting"

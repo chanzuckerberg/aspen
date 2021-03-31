@@ -99,7 +99,7 @@ resource aws_lb_target_group target_group {
   deregistration_delay = 10
   health_check {
     interval            = 15
-    path                = "/"
+    path                = var.health_check_path
     protocol            = "HTTP"
     timeout             = 5
     healthy_threshold   = 2
