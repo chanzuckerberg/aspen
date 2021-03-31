@@ -15,8 +15,8 @@ ENV FLASK_ENV=development
 ENV PIPENV_PYTHON=/usr/src/app/
 COPY setup.py .
 RUN pipenv install --dev --system --verbose && pipenv --clear
-COPY . .
 RUN apt-get update && apt-get install make
+COPY . .
 ENTRYPOINT ["./entrypoint.sh"]
 
 # Build production from files in dev
