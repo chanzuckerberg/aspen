@@ -241,6 +241,7 @@ class RemoteDatabaseConfig(Config):
             response = rds.describe_db_instances(DBInstanceIdentifier="aspen-db")
             instance_info = response["DBInstances"][0]
             instance_address = instance_info["Endpoint"]["Address"]
-        instance_port = instance_info["Endpoint"]["Port"]
+            instance_port = instance_info["Endpoint"]["Port"]
+            instance_address = f"{instance_address}:{instance_port}"
         db_name = os.getenv("RDEV_PREFIX", 'aspen_db')
-        return f"postgresql://{username}:{password}@{instance_address}:{instance_port}/{db_name}"
+        return f"postgresql://{username}:{password}@{instance_address}/{db_name}"
