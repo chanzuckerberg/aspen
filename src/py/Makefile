@@ -51,14 +51,19 @@ alembic-autogenerate:
 
 .PHONY: init-db-cli
 init-db-cli:
+	apt-get install -y git
+	# TODO - temporary hack until sqlalchemy-utils gets updated for sqlalchemy 1.4+
+	pip uninstall sqlalchemy-utils
+	pip install git+https://github.com/kvesteri/sqlalchemy-utils@c76256c64957aa3881fb9fcc58e2d8a41b914505
 	pip install .
 
 .PHONY: db-migrations
 db-migrations: init-db-cli
 	if [ ! -z "${DATA_LOAD_PATH}" ]; then \
+		apt-get install -y postgresql-client
 		aspen-cli db --remote create --sql-file ${DATA_LOAD_PATH}; \
 	fi
-	alembic upgrade head
+	DB=remote alembic upgrade head
 
 .PHONY: db-drop:
 db-drop: init-db-cli

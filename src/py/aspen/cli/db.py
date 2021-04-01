@@ -65,35 +65,44 @@ def set_passwords_from_secret(ctx):
 @click.option("--load-data", type=str, default=lambda: os.environ.get('DATA_LOAD_PATH', ''), help="S3 URI for data to import")
 @click.pass_context
 def create_db(ctx, load_data):
-    engine = ctx.obj["CONFIG"]
-    if not database_exists(engine.url):
+    conf = ctx.obj["CONFIG"]
+    engine = ctx.obj["ENGINE"]
+    db_uri = conf.DATABASE_URI
+    if not database_exists(db_uri):
         print("Database does not exist, creating database")
-        create_database(engine.url)
+        create_database(db_uri)
     else:
         print("Database already exists")
     if load_data:
-        import_data(load_data, engine)
+        import_data(load_data, db_uri)
     else:
-        create_tables_and_schema(ctx.obj["ENGINE"])
+        create_tables_and_schema(engine)
 
 
 @db.command("drop")
 @click.pass_context
 def drop(ctx):
-    engine = ctx.obj["ENGINE"]
-    if database_exists(engine.url):
+    conf = ctx.obj["conf"]
+    db_uri = conf.DATABASE_URI
+    if database_exists(db_uri):
         print("Database exists, dropping database")
-        drop_database(engine.url)
+        drop_database(db_uri)
     else:
         print("Database does not exist, skipping")
         exit(1)
 
 
-def import_data(s3_path, engine):
+def import_data(s3_path, db_uri):
     s3 = boto3.resource('s3')
     bucket_name = s3_path.split("/")[0]
     path = "/".join(s3_path.split("/")[1:])
+    print(f"downloading {path}")
     s3.Bucket(bucket_name).download_file(path, 'db_data.sql')
+    import subprocess
+    with subprocess.Popen(["psql", db_uri], stdin=subprocess.PIPE) as proc:
+        proc.stdin.write(open("db_data.sql", "rb").read())
+        proc.stdin.close()
+
 
 
 @db.command("interact")
