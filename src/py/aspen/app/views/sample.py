@@ -1,19 +1,14 @@
-from typing import Any, Iterable, Mapping, MutableSequence, Set
+from typing import Any, Mapping, MutableMapping, MutableSequence, Sequence, Set
 
 from flask import jsonify, session
-from sqlalchemy import or_
-from sqlalchemy.orm import joinedload
+from sqlalchemy import and_, or_
+from sqlalchemy.orm import aliased, joinedload
 
 from aspen.app.app import application, requires_auth
 from aspen.app.views import api_utils
 from aspen.app.views.api_utils import get_usergroup_query
 from aspen.database.connection import session_scope
-from aspen.database.models import (
-    DataType,
-    PublicRepositoryType,
-    SequencingReadsCollection,
-    UploadedPathogenGenome,
-)
+from aspen.database.models import Accession, DataType, Entity, Workflow, WorkflowType
 from aspen.database.models.sample import Sample
 from aspen.database.models.usergroup import Group, User
 
@@ -29,15 +24,21 @@ def _format_created_date(sample: Sample) -> str:
         return "not yet uploaded"
 
 
-def _format_gisaid_accession(sample: Sample) -> str:
+def _format_gisaid_accession(
+    sample: Sample, entity_id_to_accession_map: Mapping[int, Accession]
+) -> str:
     if sample.uploaded_pathogen_genome is not None:
-        for accession in sample.uploaded_pathogen_genome.accessions:
-            if accession.repository_type == PublicRepositoryType.GISAID:
-                return accession.public_identifier
+        accession = entity_id_to_accession_map.get(
+            sample.uploaded_pathogen_genome.entity_id, None
+        )
+        if accession is not None:
+            return accession.public_identifier
     if sample.sequencing_reads_collection is not None:
-        for accession in sample.sequencing_reads_collection.accessions:
-            if accession.repository_type == PublicRepositoryType.GISAID:
-                return accession.public_identifier
+        accession = entity_id_to_accession_map.get(
+            sample.sequencing_reads_collection.entity_id, None
+        )
+        if accession is not None:
+            return accession.public_identifier
     return "NOT SUBMITTED"
 
 
@@ -64,16 +65,12 @@ def samples():
             if cansee.data_type == DataType.PRIVATE_IDENTIFIERS
         }
 
-        sequencing_reads: Iterable[Sample] = (
+        # load the samples.
+        samples: Sequence[Sample] = (
             db_session.query(Sample)
             .options(
-                joinedload(
-                    Sample.uploaded_pathogen_genome, UploadedPathogenGenome.accessions
-                ),
-                joinedload(
-                    Sample.sequencing_reads_collection,
-                    SequencingReadsCollection.accessions,
-                ),
+                joinedload(Sample.uploaded_pathogen_genome),
+                joinedload(Sample.sequencing_reads_collection),
             )
             .filter(
                 or_(
@@ -82,17 +79,46 @@ def samples():
                     user.system_admin,
                 )
             )
+            .all()
         )
+        sample_entity_ids: Sequence[int] = [
+            sample.uploaded_pathogen_genome.entity_id
+            if sample.uploaded_pathogen_genome is not None
+            else sample.sequencing_reads_collection.entity_id
+            for sample in samples
+        ]
+
+        # load the accessions.
+        entity_alias = aliased(Entity)
+        accessions: Sequence[Accession] = (
+            db_session.query(Accession)
+            .distinct(Accession.entity_id)
+            .join(Accession.producing_workflow)
+            .join(entity_alias, Workflow.inputs)
+            .order_by(Accession.entity_id.desc())
+            .filter(
+                and_(
+                    Workflow.workflow_type == WorkflowType.PUBLIC_REPOSITORY_SUBMISSION,
+                    entity_alias.id.in_(sample_entity_ids),
+                )
+            )
+            .options(joinedload(Accession.producing_workflow, Workflow.inputs))
+            .all()
+        )
+        entity_id_to_accession_map: MutableMapping[int, Accession] = dict()
+        for accession in accessions:
+            for workflow_input in accession.producing_workflow.inputs:
+                entity_id_to_accession_map[workflow_input.entity_id] = accession
 
         # filter for only information we need in sample table view
         results: MutableSequence[Mapping[str, Any]] = list()
-        for sample in sequencing_reads:
+        for sample in samples:
             returned_sample_data = {
                 "public_identifier": sample.public_identifier,
                 "upload_date": _format_created_date(sample),
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
-                "gisaid": _format_gisaid_accession(sample),
+                "gisaid": _format_gisaid_accession(sample, entity_id_to_accession_map),
             }
 
             if (

@@ -31,7 +31,7 @@ def test_samples_view(
                 "private_identifier": sample.private_identifier,
                 "public_identifier": sample.public_identifier,
                 "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
-                "gisaid": sequencing_read.accessions[0].public_identifier,
+                "gisaid": sequencing_read.accessions()[0].public_identifier,
             }
         ]
     }
@@ -104,7 +104,7 @@ def test_samples_view_system_admin(
             "upload_date": api_utils.format_datetime(
                 sequencing_read_collection.upload_date
             ),
-            "gisaid": sequencing_read_collection.accessions[0].public_identifier,
+            "gisaid": sequencing_read_collection.accessions()[0].public_identifier,
         }
     ]
 
@@ -155,7 +155,7 @@ def test_samples_view_cansee_metadata(
             "upload_date": api_utils.format_datetime(
                 sequencing_read_collection.upload_date
             ),
-            "gisaid": sequencing_read_collection.accessions[0].public_identifier,
+            "gisaid": sequencing_read_collection.accessions()[0].public_identifier,
         }
     ]
 
@@ -198,6 +198,6 @@ def test_samples_view_cansee_all(
             "upload_date": api_utils.format_datetime(
                 sequencing_read_collection.upload_date
             ),
-            "gisaid": sequencing_read_collection.accessions[0].public_identifier,
+            "gisaid": sequencing_read_collection.accessions()[0].public_identifier,
         }
     ]

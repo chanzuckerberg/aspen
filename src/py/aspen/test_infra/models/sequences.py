@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from aspen.database.models import (
-    Accession,
     PublicRepositoryType,
     Sample,
     SequencingInstrumentType,
@@ -31,10 +30,8 @@ def sequencing_read_factory(
         s3_key=s3_key,
     )
     for public_repository_type, public_identifier in accessions.items():
-        sequencing_reads.accessions.append(
-            Accession(
-                repository_type=public_repository_type,
-                public_identifier=public_identifier,
-            )
+        sequencing_reads.add_accession(
+            repository_type=public_repository_type,
+            public_identifier=public_identifier,
         )
     return sequencing_reads

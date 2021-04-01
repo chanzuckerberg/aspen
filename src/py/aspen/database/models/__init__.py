@@ -1,5 +1,8 @@
+from sqlalchemy.orm import configure_mappers
+
 from aspen.database.models.accessions import (  # noqa: F401
     Accession,
+    AccessionWorkflow,
     PublicRepositoryType,
 )
 from aspen.database.models.align_read import AlignRead, Bam  # noqa: F401
@@ -35,3 +38,5 @@ from aspen.database.models.workflow import (  # noqa: F401
     WorkflowStatusType,
     WorkflowType,
 )
+
+configure_mappers()
