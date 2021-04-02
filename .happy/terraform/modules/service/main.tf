@@ -64,6 +64,10 @@ resource aws_ecs_task_definition task_definition {
         "value": "${var.api_url}"
       },
       {
+        "name": "FLASK_ENV",
+        "value": "production"
+      },
+      {
         "name": "AWS_DEFAULT_REGION",
         "value": "${data.aws_region.current.name}"
       }

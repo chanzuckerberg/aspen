@@ -61,28 +61,38 @@ def set_passwords_from_secret(ctx):
         db_interface.engine.execute(f"""ALTER USER {username} PASSWORD '{password}'""")
 
 
-@db.command("create")
+@db.command("setup")
 @click.option("--load-data", type=str, default=lambda: os.environ.get('DATA_LOAD_PATH', ''), help="S3 URI for data to import")
 @click.pass_context
-def create_db(ctx, load_data):
+def setup(ctx, load_data):
+    """If the database we're trying to connect to doesn't exist: create it and load a default dataset into it"""
     conf = ctx.obj["CONFIG"]
     engine = ctx.obj["ENGINE"]
     db_uri = conf.DATABASE_URI
-    if not database_exists(db_uri):
-        print("Database does not exist, creating database")
-        create_database(db_uri)
-    else:
-        print("Database already exists")
+    if database_exists(db_uri):
+        print("Database already exists!")
+        return
+
+    print("Database does not exist, creating database")
+    create_database(db_uri)
     if load_data:
+        print(f"Importing {load_data}")
         import_data(load_data, db_uri)
     else:
+        print(f"Creating empty tables")
         create_tables_and_schema(engine)
+
+
+@db.command("create")
+@click.pass_context
+def create_db(ctx):
+    create_tables_and_schema(ctx.obj["ENGINE"])
 
 
 @db.command("drop")
 @click.pass_context
 def drop(ctx):
-    conf = ctx.obj["conf"]
+    conf = ctx.obj["CONFIG"]
     db_uri = conf.DATABASE_URI
     if database_exists(db_uri):
         print("Database exists, dropping database")

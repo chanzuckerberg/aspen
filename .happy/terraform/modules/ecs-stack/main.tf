@@ -16,8 +16,8 @@ locals {
   remote_dev_prefix     = var.stack_prefix
   wait_for_steady_state = var.wait_for_steady_state
 
-  migration_cmd         = ["sleep", "9000"] # TODO, need amigration command
-  deletion_cmd          = ["sleep", "9000"] # TODO, need a deletion command
+  migration_cmd         = ["make", "db-migrations"]
+  deletion_cmd          = ["make", "db-drop"]
   backend_cmd           = []
   frontend_cmd          = ["npm", "run", "serve"]
   nextstrain_cmd        = ""
