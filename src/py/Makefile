@@ -53,6 +53,7 @@ alembic-autogenerate:
 init-db-cli:
 	apt-get install -y git
 	# TODO - temporary hack until sqlalchemy-utils gets updated for sqlalchemy 1.4+
+	# We're waiting on this PR: https://github.com/kvesteri/sqlalchemy-utils/pull/506
 	pip uninstall -y sqlalchemy-utils
 	pip install git+https://github.com/kvesteri/sqlalchemy-utils@c76256c64957aa3881fb9fcc58e2d8a41b914505
 	pip install .
