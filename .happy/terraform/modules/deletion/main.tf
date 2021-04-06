@@ -27,6 +27,10 @@ resource aws_ecs_task_definition task_definition {
       {
         "name": "DEPLOYMENT_STAGE",
         "value": "${var.deployment_stage}"
+      },
+      {
+        "name": "AUTH0_CONFIG_SECRET_NAME",
+        "value": "${var.deployment_stage}/aspen-config"
       }
     ],
     "logConfiguration": {
