@@ -16,7 +16,7 @@ services:
       context: src/ts
       target: dev
       cache_from:
-        - "${DOCKER_REPO}aspen-frontend:branch-main"
+        - "${DOCKER_REPO}aspen-frontend:branch-trunk"
       args:
         - BUILDKIT_INLINE_CACHE=1
     restart: always
@@ -37,7 +37,7 @@ services:
       context: src/py
       target: dev
       cache_from:
-        - "${DOCKER_REPO}aspen-backend:branch-main"
+        - "${DOCKER_REPO}aspen-backend:branch-trunk"
       args:
         - BUILDKIT_INLINE_CACHE=1
     restart: always
@@ -72,7 +72,7 @@ services:
       context: src/py
       target: dev
       cache_from:
-        - "${DOCKER_REPO}aspen-backend:branch-main"
+        - "${DOCKER_REPO}aspen-backend:branch-trunk"
       args:
         - BUILDKIT_INLINE_CACHE=1
     restart: always
@@ -134,7 +134,7 @@ services:
     build:
       context: docker/aspen-batch
       cache_from:
-        - "${DOCKER_REPO}aspen-nextstrain:branch-main"
+        - "${DOCKER_REPO}aspen-nextstrain:branch-trunk"
       args:
         - BUILDKIT_INLINE_CACHE=1
     command: ["sleep", "infinity"]
@@ -143,7 +143,7 @@ services:
     build:
       context: docker/nextstrain-errorhandler
       cache_from:
-        - "${DOCKER_REPO}aspen-nextstrain-errorhandler:branch-main"
+        - "${DOCKER_REPO}aspen-nextstrain-errorhandler:branch-trunk"
       args:
         - BUILDKIT_INLINE_CACHE=1
     command: ["sleep", "infinity"]
