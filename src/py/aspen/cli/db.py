@@ -16,8 +16,6 @@ from aspen.database.connection import enable_profiling, get_db_uri, init_db
 from aspen.database.models import *  # noqa: F401, F403
 from aspen.database.schema import create_tables_and_schema
 
-from sqlalchemy_utils import database_exists, create_database, drop_database
-
 @cli.group()
 @click.option("--local", "config_cls", flag_value=DevelopmentConfig, default=True)
 @click.option("--remote", "config_cls", flag_value=RemoteDatabaseConfig)
@@ -66,6 +64,8 @@ def set_passwords_from_secret(ctx):
 @click.pass_context
 def setup(ctx, load_data):
     """If the database we're trying to connect to doesn't exist: create it and load a default dataset into it"""
+    # TODO - we can move this to the top when https://github.com/kvesteri/sqlalchemy-utils/pull/506 is merged
+    from sqlalchemy_utils import database_exists, create_database
     conf = ctx.obj["CONFIG"]
     engine = ctx.obj["ENGINE"]
     db_uri = conf.DATABASE_URI
@@ -92,6 +92,8 @@ def create_db(ctx):
 @db.command("drop")
 @click.pass_context
 def drop(ctx):
+    # TODO - we can move this to the top when https://github.com/kvesteri/sqlalchemy-utils/pull/506 is merged
+    from sqlalchemy_utils import database_exists, drop_database
     conf = ctx.obj["CONFIG"]
     db_uri = conf.DATABASE_URI
     if database_exists(db_uri):
