@@ -46,7 +46,7 @@
           }
 
           .count {
-            @include font-body-m;
+            @include font-body-xs;
             color: $gray-dark;
           }
         }

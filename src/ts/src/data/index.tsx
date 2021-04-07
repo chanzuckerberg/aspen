@@ -28,7 +28,15 @@ const Data: FunctionComponent<RouteComponentProps> = (props) => {
       ]);
       const apiSamples = sampleResponse["samples"];
       const apiTrees = treeResponse["phylo_trees"];
-      setSamples(apiSamples);
+
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // Remove slice on PR
+      setSamples(apiSamples.slice(0, 10));
       setTrees(apiTrees);
     };
     setBioinformaticsData();

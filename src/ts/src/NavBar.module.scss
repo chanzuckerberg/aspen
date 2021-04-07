@@ -2,82 +2,92 @@
 @import "src/common/styles/spacing";
 @import "src/common/styles/typography";
 
+@mixin item-common {
+  height: 100%;
+  font-family: $font-family-primary;
+  color: $white;
+  align-items: center;
+  display: flex;
+
+  a {
+    color: $white;
+  }
+}
+
 .bar {
   background-color: $black;
+  height: 4em;
+  display: flex;
+  align-items: center;
 
-  .contentArea {
-    margin: 0 $space-xxl 0 $space-xxl;
+  .left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex: auto;
+    margin-left: $space-xl;
+    height: 25px;
+  }
 
-    .left {
-      justify-content: flex-start;
+  .center {
+    display: flex;
+    justify-content: center;
+    flex: auto;
+  }
+
+  .right {
+    display: flex;
+    justify-content: flex-end;
+    flex: auto;
+    margin-right: $space-l;
+  }
+
+  .item {
+    @include item-common;
+  }
+
+  .logo {
+    @include item-common;
+    margin-right: $space-l;
+  }
+
+  .org {
+    @include item-common;
+    @include font-header-xl;
+  }
+
+  .separator {
+    border-left: $space-xxxs solid $white;
+    margin-right: $space-l;
+    height: 100%;
+  }
+
+  .link {
+    @include font-header-m;
+
+    &:hover {
+      background-color: $gray-darkest;
     }
-    .center {
-      justify-content: center;
-    }
-    .right {
-      justify-content: flex-end;
-    }
 
-    .left,
-    .center,
-    .right {
-      div {
-        flex: 0 1 auto;
-      }
+    &:active {
+      background-color: $gray-dark;
     }
+  }
 
-    .item {
-      height: 100%;
-      padding: $space-l $space-l $space-l $space-l;
-      font-family: $font-family-primary;
-      color: $white;
-      align-items: center;
+  .dropdownMenu {
+    margin: $space-s;
 
-      a {
-        color: $white;
-      }
-    }
-
-    .logo {
-      height: 100%;
-    }
-
-    .separator {
-      border-left: $space-xxxs solid $white;
-      margin: $space-l 0 $space-l 0;
-    }
-
-    .org {
-      @include font-header-xl;
-    }
-
-    .link {
-      @include font-header-m;
+    .dropdownLink {
+      @include font-body-m;
+      color: $black;
+      padding: $space-s $space-xxl $space-s $space-xl;
 
       &:hover {
-        background-color: $gray-darkest;
+        background-color: $gray-off-white;
       }
 
       &:active {
-        background-color: $gray-dark;
-      }
-    }
-
-    .dropdownMenu {
-      margin: $space-s;
-
-      .dropdownLink {
-        @include font-body-m;
-        color: $black;
-        padding: $space-s $space-xxl $space-s $space-xl;
-
-        &:hover {
-          background-color: $gray-off-white;
-        }
-
-        &:active {
-          background-color: $white;
-        }
+        background-color: $white;
       }
     }
   }

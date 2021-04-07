@@ -22,9 +22,7 @@ const App: FunctionComponent = () => {
   return (
     <Router>
       <div className={style.app}>
-        <div className={style.navBar}>
-          <NavBar org={org} user={user} />
-        </div>
+        <NavBar org={org} user={user} />
         <div className={style.view}>
           <Switch>
             <Route path="/data" component={Data} />

@@ -46,16 +46,14 @@ const NavBar: FunctionComponent<Props> = ({ org, user }: Props) => {
 
   return (
     <div className={style.bar}>
-      <div className={style.contentArea}>
-        <div className={style.left}>
-          <div className={cx(style.item, style.logo)}>
-            <AspenLogo height={"60%"} />
-          </div>
-          {orgSplash}
+      <div className={style.left}>
+        <div className={cx(style.item, style.logo)}>
+          <AspenLogo height={"60%"} />
         </div>
-        <div className={style.center}></div>
-        <div className={style.right}>{rightEdge}</div>
+        {orgSplash}
       </div>
+      <div className={style.center}></div>
+      <div className={style.right}>{rightEdge}</div>
     </div>
   );
 };
