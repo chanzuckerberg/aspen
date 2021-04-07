@@ -8,12 +8,11 @@
   flex-direction: column;
 
   .searchBar {
-    padding: $space-m;
     margin-bottom: $space-l;
     width: 20em;
 
     input {
-      border-radius: $border-radius-l;
+      border-radius: $border-radius-l !important;
     }
   }
 
