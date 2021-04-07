@@ -56,15 +56,15 @@ const DataSubview: FunctionComponent<Props> = ({ data, headers }: Props) => {
   const render = (tableData: BioinformaticsData[]) => {
     return (
       <div className={style.samplesRoot}>
-        <div className={style.searchBar}>
-          <Input
-            transparent
-            icon="search"
-            placeholder="Search"
-            loading={state.searching}
-            onChange={searcher}
-          />
-        </div>
+        <Input
+          className={style.searchBar}
+          type="search"
+          icon="search"
+          placeholder="Search"
+          loading={state.searching}
+          onChange={searcher}
+        />
+
         <div className={style.samplesTable}>
           <DataTable data={tableData} headers={headers} />
         </div>

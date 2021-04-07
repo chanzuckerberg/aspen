@@ -14,7 +14,14 @@ const App: FunctionComponent = () => {
     const setUserData = async () => {
       const { group, user } = await fetchUserData();
       setUser(user.name);
-      setOrg(group.name);
+      setOrg("Santa Clara County");
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // UNCOMMENT THIS
+      // setOrg(group.name);
     };
     setUserData();
   }, []);

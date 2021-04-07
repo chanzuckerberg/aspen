@@ -16,7 +16,7 @@
 
 .bar {
   background-color: $black;
-  height: 4em;
+  height: 50px;
   display: flex;
   align-items: center;
 
@@ -36,6 +36,8 @@
   }
 
   .right {
+    @include font-body-xs;
+
     display: flex;
     justify-content: flex-end;
     flex: auto;
