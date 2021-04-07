@@ -48,16 +48,21 @@
 
   .logo {
     @include item-common;
+    @include font-header-l;
     margin-right: $space-l;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.13em;
+    fill: white;
   }
 
   .org {
     @include item-common;
-    @include font-header-xl;
+    @include font-header-l;
   }
 
   .separator {
-    border-left: $space-xxxs solid $white;
+    border-left: 1px solid $gray-lightest;
     margin-right: $space-l;
     height: 100%;
   }

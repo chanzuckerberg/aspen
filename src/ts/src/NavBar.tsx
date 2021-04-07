@@ -1,6 +1,5 @@
 import cx from "classnames";
 import React, { FunctionComponent } from "react";
-import { ReactComponent as AspenLogo } from "src/common/styles/logos/AspenLogo.svg";
 import style from "./NavBar.module.scss";
 
 type Props = {
@@ -47,9 +46,7 @@ const NavBar: FunctionComponent<Props> = ({ org, user }: Props) => {
   return (
     <div className={style.bar}>
       <div className={style.left}>
-        <div className={cx(style.item, style.logo)}>
-          <AspenLogo height={"60%"} />
-        </div>
+        <div className={style.logo}>ASPEN</div>
         {orgSplash}
       </div>
       <div className={style.center}></div>
