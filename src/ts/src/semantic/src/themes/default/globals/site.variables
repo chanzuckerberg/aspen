@@ -7,6 +7,7 @@
 /*-------------------
     Aspen Colors
 --------------------*/
+
 @grayMedium: #999999;
 @grayDarkest: #545454;
 
@@ -152,7 +153,7 @@
 @pageOverflowX       : hidden;
 
 @lineHeight          : 1.4285em;
-@textColor           : rgba(0, 0, 0, 0.87);
+@textColor           : @black;
 
 /*-------------------
       Paragraph
@@ -261,7 +262,7 @@
 @pink             : #E03997;
 @brown            : #A5673F;
 @grey             : #767676;
-@black            : #1B1C1D;
+@black            : black;
 
 /*---  Light Colors  ---*/
 @lightRed         : #FF695E;

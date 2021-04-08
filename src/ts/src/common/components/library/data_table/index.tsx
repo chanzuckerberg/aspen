@@ -21,8 +21,8 @@ const DataTable: FunctionComponent<Props> = ({ data = [], headers }: Props) => {
 
   // render functions
   const headerRow = headers.map((column: Header) => (
-    <Table.HeaderCell key={column.key}>
-      <div className={style.headerCell}>{column.text}</div>
+    <Table.HeaderCell key={column.key} className={style.headerCell}>
+      <div className={style.headerCellContent}>{column.text}</div>
     </Table.HeaderCell>
   ));
 
