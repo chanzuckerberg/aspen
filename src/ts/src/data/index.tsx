@@ -7,12 +7,14 @@ import {
   RouteComponentProps,
   Switch,
 } from "react-router-dom";
-import { Menu } from "semantic-ui-react";
+import { MenuItem, Tab } from "semantic-ui-react";
 import { fetchSamples, fetchTrees } from "src/common/api";
 import { DataSubview } from "src/common/components";
 import { SAMPLE_HEADERS, TREE_HEADERS } from "./headers";
 import style from "./index.module.scss";
 import { TREE_TRANSFORMS } from "./transforms";
+
+const TAB_MENU_OPTIONS = { secondary: true, pointing: true };
 
 const Data: FunctionComponent<RouteComponentProps> = (props) => {
   const { location } = props;
@@ -88,16 +90,18 @@ const Data: FunctionComponent<RouteComponentProps> = (props) => {
     if (location?.pathname === category.to) {
       focusStyle = style.active;
     }
-    dataJSX.menuItems.push(
-      <Link to={category.to} key={category.text}>
-        <Menu.Item className={style.menuItem}>
-          <div className={style.category}>
-            <div className={cx(style.title, focusStyle)}>{category.text}</div>
-            <div className={style.count}>{category.data?.length}</div>
-          </div>
-        </Menu.Item>
-      </Link>
-    );
+    dataJSX.menuItems.push({
+      menuItem: (
+        <MenuItem className={style.menuItem} key={category.text} as="div">
+          <Link to={category.to}>
+            <div className={style.category}>
+              <div className={cx(style.title, focusStyle)}>{category.text}</div>
+              <div className={style.count}>{category.data?.length}</div>
+            </div>
+          </Link>
+        </MenuItem>
+      ),
+    });
 
     dataJSX.routes.push(
       <Route
@@ -113,9 +117,11 @@ const Data: FunctionComponent<RouteComponentProps> = (props) => {
   return (
     <div className={style.dataRoot}>
       <div className={style.navigation}>
-        <Menu className={style.menu} secondary>
-          {dataJSX.menuItems}
-        </Menu>
+        <Tab
+          className={style.menu}
+          menu={TAB_MENU_OPTIONS}
+          panes={dataJSX.menuItems}
+        />
       </div>
       <div className={style.view}>
         <Switch>
