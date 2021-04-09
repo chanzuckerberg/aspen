@@ -15,117 +15,115 @@ $font-weight-heavy: 800;
 
 // Typography Sizes
 // Headers
-@mixin font-header-xxl {
-  font-family: $font-family-primary;
-  font-size: 1.625em;
-  line-height: 2.125em;
+@mixin font-header-common {
   font-weight: $font-weight-semibold;
-  letter-spacing: 0.01875em;
+  letter-spacing: 0.3px;
+  font-family: $font-family-primary;
+}
+
+@mixin font-header-xxl {
+  @include font-header-common;
+
+  font-size: 26px;
+  line-height: 34px;
 }
 
 @mixin font-header-xl {
-  font-family: $font-family-primary;
-  font-size: 1.375em;
-  line-height: 1.875em;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0.01875em;
+  @include font-header-common;
+
+  font-size: 22px;
+  line-height: 30px;
 }
 
 @mixin font-header-l {
-  font-family: $font-family-primary;
-  font-size: 1.125em;
-  line-height: 1.5em;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0.01875em;
+  @include font-header-common;
+
+  font-size: 18px;
+  line-height: 24px;
 }
 
 @mixin font-header-m {
-  font-family: $font-family-primary;
-  font-size: 1em;
-  line-height: 1.375em;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0.01875em;
+  @include font-header-common;
+
+  font-size: 16px;
+  line-height: 22px;
 }
 
 @mixin font-header-s {
-  font-family: $font-family-primary;
-  font-size: 0.875em;
-  line-height: 1.25em;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0.01875em;
+  @include font-header-common;
+
+  font-size: 14px;
+  line-height: 20px;
 }
 
 @mixin font-header-xs {
-  font-family: $font-family-primary;
-  font-size: 0.8125em;
-  line-height: 1.125em;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0.01875em;
+  @include font-header-common;
+
+  font-size: 13px;
+  line-height: 18px;
 }
 
 @mixin font-header-xxs {
-  font-family: $font-family-primary;
-  font-size: 0.75em;
-  line-height: 1.125em;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0.01875em;
+  @include font-header-common;
+
+  font-size: 12px;
+  line-height: 18px;
 }
 
 @mixin font-header-xxxs {
+  @include font-header-common;
+
+  font-size: 11px;
+  line-height: 16px;
+}
+
+@mixin font-body-common {
   font-family: $font-family-primary;
-  font-size: 0.6875em;
-  line-height: 1em;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0.01875em;
+  letter-spacing: 0.3px;
+  font-weight: $font-weight-regular;
 }
 
 // Body
 @mixin font-body-l {
-  font-family: $font-family-primary;
-  font-size: 1.125em;
-  line-height: 1.75em;
-  letter-spacing: 0.01875em;
-  font-weight: $font-weight-regular;
+  @include font-body-common;
+
+  font-size: 18px;
+  line-height: 28px;
 }
 
 @mixin font-body-m {
-  font-family: $font-family-primary;
-  font-size: 1em;
-  line-height: 1.625em;
-  letter-spacing: 0.01875em;
-  font-weight: $font-weight-regular;
+  @include font-body-common;
+
+  font-size: 16px;
+  line-height: 26px;
 }
 
 @mixin font-body-s {
-  font-family: $font-family-primary;
-  font-size: 0.875em;
-  line-height: 1.5em;
-  letter-spacing: 0.01875em;
-  font-weight: $font-weight-regular;
+  @include font-body-common;
+
+  font-size: 14px;
+  line-height: 24px;
 }
 
 @mixin font-body-xs {
-  font-family: $font-family-primary;
-  font-size: 0.8125em;
-  line-height: 1.25em;
-  letter-spacing: 0.01875em;
-  font-weight: $font-weight-regular;
+  @include font-body-common;
+
+  font-size: 13px;
+  line-height: 20px;
 }
 
 @mixin font-body-xxs {
-  font-family: $font-family-primary;
-  font-size: 0.75em;
-  line-height: 1.125em;
-  letter-spacing: 0.01875em;
-  font-weight: $font-weight-regular;
+  @include font-body-common;
+
+  font-size: 12px;
+  line-height: 18px;
 }
 
 @mixin font-body-xxxs {
-  font-family: $font-family-primary;
-  font-size: 0.6875em;
-  line-height: 1em;
-  letter-spacing: 0.01875em;
-  font-weight: $font-weight-regular;
+  @include font-body-common;
+
+  font-size: 11px;
+  line-height: 16px;
 }
 
 // Code (Mixin)
@@ -136,29 +134,30 @@ $font-weight-heavy: 800;
 }
 
 // All-Caps
-@mixin font-caps-xxs {
+@mixin font-caps-common {
   font-family: $font-family-primary;
-  font-size: 0.75em;
-  line-height: 1.125em;
-  letter-spacing: 0.0625em;
+  letter-spacing: 1px;
   font-weight: $font-weight-semibold;
   text-transform: uppercase;
+}
+
+@mixin font-caps-xxs {
+  @include font-caps-common;
+
+  font-size: 12px;
+  line-height: 18px;
 }
 
 @mixin font-caps-xxxs {
-  font-family: $font-family-primary;
-  font-size: 0.6875em;
-  line-height: 1em;
-  letter-spacing: 0.0625em;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
+  @include font-caps-common;
+
+  font-size: 11px;
+  line-height: 16px;
 }
 
 @mixin font-caps-xxxxs {
-  font-family: $font-family-primary;
+  @include font-caps-common;
+
   font-size: 10px;
-  line-height: 0.875em;
-  letter-spacing: 0.0625em;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
+  line-height: 164px;
 }

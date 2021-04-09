@@ -8,18 +8,15 @@
   flex-direction: column;
 
   .searchBar {
-    padding: $space-m;
-    margin: 0 0 $space-m 0;
+    margin-bottom: $space-l;
     width: 20em;
-    border: thin solid $gray-light;
-    border-radius: $border-radius-l;
 
-    &:hover {
-      border-color: $gray-medium;
+    input {
+      border-radius: $border-radius-l !important;
     }
   }
 
   .samplesTable {
-    margin: $space-m 0 0 0;
+    margin-top: $space-m;
   }
 }

@@ -5,18 +5,24 @@
 
 .header {
   .headerCell {
+    border-bottom: 3px solid $gray-lightest !important;
+  }
+
+  .headerCellContent {
     @include font-header-s;
+
     color: $gray-dark;
   }
 }
 
 .cell {
   @include font-header-s;
+  display: flex;
   align-items: center;
   margin: $space-xs 0 $space-xs 0;
 
   .icon {
-    margin: 0 $space-l 0 $space-l;
+    margin-right: $space-l;
     fill: $gray-light;
   }
 

@@ -47,6 +47,7 @@
         height: 100%;
 
         .category {
+          display: flex;
           align-items: center;
           box-sizing: border-box;
 
@@ -62,7 +63,7 @@
           }
 
           .count {
-            @include font-body-m;
+            @include font-body-xs;
             color: $gray-dark;
           }
         }
