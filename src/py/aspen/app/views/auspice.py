@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import requests
 logger = logging.getLogger(__name__)
 
 from typing import Any, Iterable, Mapping, MutableSequence, Tuple
@@ -77,4 +78,5 @@ def auspice(phylo_tree_id: int):
 
 @application.route("/api/auspice/view/<string:presigned_url>/", methods=["GET"])
 def auspice_view(presigned_url: str):
-    return redirect(unquote_plus(presigned_url))
+    r = requests.get(unquote_plus(presigned_url))
+    return r.content
