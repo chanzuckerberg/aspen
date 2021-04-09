@@ -46,20 +46,14 @@ def auspice(phylo_tree_id: int):
 
 @application.route("/api/auspice/view/<int:phylo_tree_id>/auspice.json", methods=["GET"])
 def auspice_view(phylo_tree_id: int):
-    phylo_tree: PhyloTree
     with session_scope(application.DATABASE_INTERFACE) as db_session:
         phylo_runs: Iterable[Tuple[PhyloRun, int]] = (
             db_session.query(PhyloRun)
             .options(joinedload(PhyloRun.outputs))
-            .filter(
-                or_(
-                    PhyloRun.group_id == user.group_id,
-                    user.system_admin,
-                )
-            )
             .filter(PhyloRun.workflow_status == WorkflowStatusType.COMPLETED)
         )
 
+        phylo_tree: PhyloTree
         for phylo_run in phylo_runs:
             for output in phylo_run.outputs:
                 if isinstance(output, PhyloTree) and output.entity_id == phylo_tree_id:
@@ -67,11 +61,11 @@ def auspice_view(phylo_tree_id: int):
                     found = True
                     break
 
-    s3_client = boto3.client("s3")
+        s3_client = boto3.client("s3")
 
-    s3_response = s3_client.get_object(Bucket=phylo_tree.s3_bucket, Key=phylo_tree.s3_key)
-    f = s3_response.body
-    response = make_response(f)
-    response.headers['Content-Type'] = 'text/json'
-    response.headers['Content-Disposition'] = 'attachment; filename=auspice.json'
-    return response
+        s3_response = s3_client.get_object(Bucket=phylo_tree.s3_bucket, Key=phylo_tree.s3_key)
+        f = s3_response.body
+        response = make_response(f)
+        response.headers['Content-Type'] = 'text/json'
+        response.headers['Content-Disposition'] = 'attachment; filename=auspice.json'
+        return response
