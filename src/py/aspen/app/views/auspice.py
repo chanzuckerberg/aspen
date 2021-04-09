@@ -61,11 +61,18 @@ def auspice_view(phylo_tree_id: int):
                     found = True
                     break
 
-        s3_client = boto3.client("s3")
+        s3_client = boto3.resource(
+            "s3",
+            endpoint_url=os.getenv("BOTO_ENDPOINT_URL") or None,
+            config=boto3.session.Config(signature_version="s3v4")
+            )
 
-        s3_response = s3_client.get_object(Bucket=phylo_tree.s3_bucket, Key=phylo_tree.s3_key)
-        f = s3_response.body
-        response = make_response(f)
+        s3_object = s3_client.Object(phylo_tree.s3_bucket, phylo_tree.s3_key)
+        content = s3_object.get()['Body'].read().decode('utf-8')
+
+        # s3_response = s3_client.get_object(Bucket=phylo_tree.s3_bucket, Key=phylo_tree.s3_key)
+        # f = s3_response.body
+        response = make_response(content)
         response.headers['Content-Type'] = 'text/json'
         response.headers['Content-Disposition'] = 'attachment; filename=auspice.json'
         return response
