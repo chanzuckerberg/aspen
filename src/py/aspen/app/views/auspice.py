@@ -69,9 +69,9 @@ def auspice_view(phylo_tree_id: int):
 
     s3_client = boto3.client("s3")
 
-    s3_response = s3.get_object(Bucket=phylo_tree.s3_bucket, Key=phylo_tree.s3_key)
+    s3_response = s3_client.get_object(Bucket=phylo_tree.s3_bucket, Key=phylo_tree.s3_key)
     f = s3_response.body
     response = make_response(f)
     response.headers['Content-Type'] = 'text/json'
-    response.headers['Content-Disposition'] = 'attachment; filename=example.json'
+    response.headers['Content-Disposition'] = 'attachment; filename=auspice.json'
     return response
