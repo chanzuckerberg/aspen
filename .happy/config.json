@@ -11,12 +11,12 @@
             "terraform_directory": ".happy/terraform/envs/rdev",
             "log_group_prefix": "/aspen/rdev"
         },
-        "stage": {
+        "staging": {
             "aws_profile": "genepi-dev",
-            "secret_arn": "happy/env-stage-config",
-            "terraform_directory": ".happy/terraform/envs/stage",
+            "secret_arn": "happy/env-staging-config",
+            "terraform_directory": ".happy/terraform/envs/staging",
             "delete_protected": true,
-            "auto_run_migrations": false,
+            "auto_run_migrations": true,
             "log_group_prefix": "/aspen/staging"
         },
         "prod": {

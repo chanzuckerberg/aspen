@@ -45,7 +45,7 @@ locals {
 
   ecs_role_arn          = local.secret["service_roles"]["ecs_role"]
   sfn_role_arn          = local.secret["service_roles"]["sfn_nextstrain"]
-  lambda_execution_role = local.secret["service_roles"]["nextstrain_errorhandler"]
+  lambda_execution_role = local.secret["service_roles"]["nextstrain-errorhandler"]
 
   frontend_url = try(join("", ["https://", module.frontend_dns[0].dns_prefix, ".", local.external_dns]), var.frontend_url)
   backend_url  = try(join("", ["https://", module.backend_dns[0].dns_prefix, ".", local.external_dns]), var.backend_url)
