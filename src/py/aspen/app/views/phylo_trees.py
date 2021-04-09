@@ -2,7 +2,7 @@ import json
 from typing import Any, Iterable, Mapping, MutableSequence, Tuple
 
 import boto3
-from flask import jsonify, session
+from flask import jsonify, session, make_response
 from sqlalchemy import func, or_
 from sqlalchemy.orm import joinedload
 
@@ -107,5 +107,8 @@ def phylo_tree(phylo_tree_id: int):
 
         # TODO: replace the public identifiers with the private identifiers we have
         # access to.
+        response = make_response(json_data)
+        response.headers['Content-Type'] = 'text/json'
+        response.headers['Content-Disposition'] = f'attachment; filename={phylo_tree_id}.json'
 
-        return jsonify(json_data)
+        return response
