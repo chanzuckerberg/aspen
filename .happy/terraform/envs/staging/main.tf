@@ -7,7 +7,7 @@ module stack {
   image_tag           = var.image_tag
   priority            = var.priority
   stack_name          = var.stack_name
-  deployment_stage    = "stage"
+  deployment_stage    = "staging"
   delete_protected    = true
   require_okta        = false
   sql_import_file     = "db_snapshots/dev_backup.sql"
