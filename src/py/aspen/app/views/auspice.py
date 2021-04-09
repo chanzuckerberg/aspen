@@ -40,7 +40,7 @@ def auspice(phylo_tree_id: int):
         # )
 
     view_string = url_for("auspice_view", _external=True, phylo_tree_id=phylo_tree_id)
-    view_string = view_string.replace("https://", "")
+    view_string = view_string.replace("http://", "")
 
     return redirect(f'https://nextstrain.org/fetch/{view_string}')
 
