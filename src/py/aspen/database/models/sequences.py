@@ -141,6 +141,14 @@ class SequencingReadsCollection(Entity, DictMixin):
 
         return results
 
+    @property
+    def pathogen_genomes(self) -> Sequence[CalledPathogenGenome]:
+        return [
+            pathogen_genome
+            for host_filtered_sequencing_reads_collection in self.host_filtered_sequencing_reads
+            for pathogen_genome in host_filtered_sequencing_reads_collection.pathogen_genomes
+        ]
+
 
 class PathogenGenome(Entity):
     __tablename__ = "pathogen_genomes"

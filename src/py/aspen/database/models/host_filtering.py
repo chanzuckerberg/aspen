@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import MutableSequence, Sequence, TYPE_CHECKING
 
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 
@@ -8,7 +8,10 @@ from aspen.database.models.entity import Entity, EntityType
 from aspen.database.models.workflow import Workflow, WorkflowType
 
 if TYPE_CHECKING:
-    from aspen.database.models.sequences import SequencingReadsCollection
+    from aspen.database.models.sequences import (
+        CalledPathogenGenome,
+        SequencingReadsCollection,
+    )
 
 
 class HostFilteredSequencingReadsCollection(Entity):
@@ -23,13 +26,25 @@ class HostFilteredSequencingReadsCollection(Entity):
 
     @property
     def sequencing_read(self) -> SequencingReadsCollection:
-        """The raw gisaid dump this processed gisaid dump was generated from."""
+        """The sequencing read collection this host-filtered sequencing read collection
+        was generated from."""
         # this import has to be here for circular dependencies reasons. :(
         from aspen.database.models.sequences import SequencingReadsCollection
 
         parents = self.get_parents(SequencingReadsCollection)
         assert len(parents) == 1
         return parents[0]
+
+    @property
+    def pathogen_genomes(self) -> Sequence[CalledPathogenGenome]:
+        # this import has to be here for circular dependencies reasons. :(
+        from aspen.database.models.sequences import CalledPathogenGenome
+
+        results: MutableSequence[CalledPathogenGenome] = list()
+        for workflow, entities in self.get_children(CalledPathogenGenome):
+            results.extend(entities)
+
+        return results
 
 
 class FilterRead(Workflow):
