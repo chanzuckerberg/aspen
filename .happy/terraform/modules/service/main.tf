@@ -40,6 +40,10 @@ resource aws_ecs_task_definition task_definition {
         "value": "https"
       },
       {
+        "name": "PREFERRED_URL_SCHEME",
+        "value": "https"
+      },
+      {
         "name": "REMOTE_DEV_PREFIX",
         "value": "${var.remote_dev_prefix}"
       },

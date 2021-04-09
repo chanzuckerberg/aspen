@@ -1,3 +1,4 @@
+import os
 import json
 from typing import Any, Iterable, Mapping, MutableSequence, Tuple
 from urllib.parse import quote_plus, unquote_plus
@@ -66,7 +67,7 @@ def auspice(phylo_tree_id: int):
 
         quoted_url = quote_plus(presigned_url)
 
-        view_string = url_for("auspice_view", _external=True, presigned_url=quoted_url)
+        view_string = url_for("auspice_view", _external=True, _scheme=os.getenv("PREFERRED_URL_SCHEME", "http"), presigned_url=quoted_url)
 
     return redirect(f'https://nextstrain.org/fetch/{view_string}')
 

@@ -31,6 +31,14 @@ resource aws_batch_job_definition batch_job_def {
     {
       "name": "FRONTEND_URL",
       "value": "${var.frontend_url}"
+    },
+    {
+      "name": "AUTH0_CONFIG_SECRET_NAME",
+      "value": "${var.deployment_stage}/aspen-config"
+    },
+    {
+      "name": "AWS_REGION",
+      "value": "${data.aws_region.current.name}"
     }
   ],
   "vcpus": 2,
