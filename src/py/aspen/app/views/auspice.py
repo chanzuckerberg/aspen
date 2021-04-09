@@ -8,7 +8,7 @@ from typing import Any, Iterable, Mapping, MutableSequence, Tuple
 from urllib.parse import quote_plus, unquote_plus
 
 import boto3
-from flask import jsonify, session, redirect, url_for
+from flask import jsonify, session, redirect, url_for, make_response
 from sqlalchemy import func, or_
 from sqlalchemy.orm import joinedload
 
@@ -80,4 +80,7 @@ def auspice(phylo_tree_id: int):
 @application.route("/api/auspice/view/<string:presigned_url>/auspice.json", methods=["GET"])
 def auspice_view(presigned_url: str):
     r = requests.get(unquote_plus(presigned_url))
-    return r.content
+    response = make_response(r.content)
+    response.headers['Content-Type'] = 'text/json'
+    response.headers['Content-Disposition'] = 'attachment; filename=auspice.json'
+    return response
