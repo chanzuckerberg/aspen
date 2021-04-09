@@ -74,9 +74,9 @@ def auspice(phylo_tree_id: int):
 
         view_string = url_for("auspice_view", _external=True, _scheme=os.getenv("PREFERRED_URL_SCHEME", "http"), presigned_url=quoted_url)
 
-    return redirect(f'https://nextstrain.org/fetch/{view_string}')
+    return redirect(f'https://nextstrain.org/fetch/{view_string}/auspice.json')
 
-@application.route("/api/auspice/view/<string:presigned_url>/", methods=["GET"])
+@application.route("/api/auspice/view/<string:presigned_url>/auspice.json", methods=["GET"])
 def auspice_view(presigned_url: str):
     r = requests.get(unquote_plus(presigned_url))
     return r.content
