@@ -1,22 +1,30 @@
 import React, { FunctionComponent } from "react";
 import { Table } from "semantic-ui-react";
-import { ReactComponent as TreeIcon } from "src/common/icons/PhyloTree.svg";
-import { ReactComponent as SampleIcon } from "src/common/icons/Sample.svg";
 import style from "./index.module.scss";
 
 interface Props {
-  data?: BioinformaticsData[];
+  data?: TableItem[];
   headers: Header[];
+  renderer?: CustomRenderer;
 }
-
-const ICONS: Record<string, JSX.Element> = {
-  Sample: <SampleIcon className={style.icon} />,
-  Tree: <TreeIcon className={style.icon} />,
-};
 
 const UNDEFINED_TEXT = "---";
 
-const DataTable: FunctionComponent<Props> = ({ data = [], headers }: Props) => {
+function defaultCellRenderer({ value }: CustomTableRenderProps): JSX.Element {
+  let displayData;
+  if (value === undefined) {
+    displayData = UNDEFINED_TEXT;
+  } else {
+    displayData = value;
+  }
+  return <div className={style.cell}>{displayData}</div>;
+}
+
+const DataTable: FunctionComponent<Props> = ({
+  data = [],
+  headers,
+  renderer,
+}: Props) => {
   const indexingKey = headers[0].key;
 
   // render functions
@@ -26,28 +34,21 @@ const DataTable: FunctionComponent<Props> = ({ data = [], headers }: Props) => {
     </Table.HeaderCell>
   ));
 
-  const sampleRow = (item: BioinformaticsData): Array<JSX.Element> => {
-    return headers.map((column, index) => {
-      let displayData = item[column.key];
-      let icon: JSX.Element | null = null;
-      if (displayData === undefined) {
-        displayData = UNDEFINED_TEXT;
-      }
-      if (index === 0) {
-        icon = ICONS[item.type];
+  const sampleRow = (item: TableItem): Array<JSX.Element> => {
+    return headers.map((header, index) => {
+      const value = item[header.key];
+      if (renderer === undefined) {
+        renderer = defaultCellRenderer;
       }
       return (
-        <Table.Cell key={`${item[indexingKey]}-${column.key}`}>
-          <div className={style.cell}>
-            {icon}
-            {displayData}
-          </div>
+        <Table.Cell key={`${item[indexingKey]}-${header.key}`}>
+          {renderer({ header, index, item, value })}
         </Table.Cell>
       );
     });
   };
 
-  function tableRows(data: BioinformaticsData[]): Array<JSX.Element> {
+  function tableRows(data: TableItem[]): Array<JSX.Element> {
     return data.map((item) => (
       <Table.Row key={`${item[indexingKey]}`}>{sampleRow(item)}</Table.Row>
     ));

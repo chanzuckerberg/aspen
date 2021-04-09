@@ -1,0 +1,45 @@
+@import "src/common/styles/spacing";
+@import "src/common/styles/typography";
+@import "src/common/styles/colors";
+@import "src/common/styles/corners";
+
+.button {
+  width: 7.5em;
+  height: 2.125em;
+  border-radius: $border-radius-l;
+  border-style: solid;
+  border-color: $primary;
+  border-width: 0.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  &:hover {
+    background-color: $primary-dark;
+    border-color: $primary-dark;
+    color: $white;
+    cursor: pointer;
+  }
+
+  &:active {
+    background: $primary-darkest;
+    border-color: $primary-darkest;
+    color: $white;
+  }
+}
+
+.text {
+  @include font-body-xs;
+  margin: $space-xs $space-s $space-xs $space-s;
+}
+
+.primary {
+  background-color: $primary;
+  color: $white;
+}
+
+.secondary {
+  background-color: $white;
+  color: $primary;
+}

@@ -5,6 +5,7 @@
 #### AWS Secrets
 
 Create a secret called `aspen-config` with the following contents:
+
 ```json
 {
   "AUTH0_DOMAIN": "<MY_DOMAIN_HERE>.auth0.com",
@@ -24,12 +25,13 @@ Create a secret called `aspen-config` with the following contents:
 #### Terraform setup
 
 1. Install terraform:
+
 ```bash
 aspen% brew tap hashicorp/tap
 aspen% brew install hashicorp/tap/terraform
 ```
 
-2. Source the `environment` file at the top level of the repo.  You may need to set `AWS_PROFILE` or `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` in your environment.
+2. Source the `environment` file at the top level of the repo. You may need to set `AWS_PROFILE` or `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` in your environment.
 3. Run the deployment flow.
 
 ```bash
@@ -37,7 +39,7 @@ aspen% source environment
 aspen% make deploy-tf-initial
 ```
 
-This should create the policies necessary to deploy to Elastic Beanstalk and create the database.  To ensure that passwords are not stored in the terraform state, accounts are created with default passwords.  To reset them to match what is stored in AWS Secrets, run `aspen-cli db set-passwords-from-secret --environment <environment>`, where <environment> is either staging or prod.  Once the passwords are changed from the default password, subsequent runs of terraform will require pulling the password from AWS secrets to connect to the database.  The makefile rule `deploy-tf` manages that process.
+This should create the policies necessary to deploy to Elastic Beanstalk and create the database. To ensure that passwords are not stored in the terraform state, accounts are created with default passwords. To reset them to match what is stored in AWS Secrets, run `aspen-cli db set-passwords-from-secret --environment <environment>`, where <environment> is either staging or prod. Once the passwords are changed from the default password, subsequent runs of terraform will require pulling the password from AWS secrets to connect to the database. The makefile rule `deploy-tf` manages that process.
 
 ```bash
 aspen% make deploy-tf
@@ -48,17 +50,22 @@ aspen% make deploy-tf
 Because the [AWS Elastic Beanstalk CLI](https://github.com/aws/aws-elastic-beanstalk-cli) depends on libraries that conflict with the libraries required by our development workflow, it is recommended to install the AWS EB CLI tools in a separate virtual environment.
 
 1. Set up a virtual environment and install the EB CLI.
+
 ```bash
 aspen% python -V
 Python 3.7.6
 aspen% python3.7 -m venv .venv-ebcli
 aspen% .venv-ebcli/bin/pip install awsebcli
 ```
+
 2. Set up the elastic beanstalk configuration in the top-level directory.
+
 ```bash
 aspen% .venv-ebcli/bin/eb init --region=us-west-2 --platform python-3.7 aspen
 ```
-3. Pick a reasonable identifier for your target deployment environment, such as aspen-<your-user-name>.  Create the environment if you haven't done so before.  This will deploy the code as well, so if you are doing this step, skip the next one.
+
+3. Pick a reasonable identifier for your target deployment environment, such as aspen-<your-user-name>. Create the environment if you haven't done so before. This will deploy the code as well, so if you are doing this step, skip the next one.
+
 ```bash
 aspen% .venv-ebcli/bin/eb create aspen-<my_username> --cname aspen-<my_username> --envvars AWS_REGION=us-west-2,FLASK_ENV=staging --instance_profile aspen-elasticbeanstalk-ec2-instance-profile
 ```
@@ -66,27 +73,33 @@ aspen% .venv-ebcli/bin/eb create aspen-<my_username> --cname aspen-<my_username>
 If you want ssh access to the EC2 servers, add a ssh keypair using the EC2 console and add `-k <keyname>` to your `eb create` command.
 
 4. If you have already created an environment in the past, just updating the existing deployment environment.
+
 ```bash
 aspen% .venv-ebcli/bin/eb deploy aspen-myusername
 ```
-5. Visit your deployment.  This should open your deployment environment in your browser.
+
+5. Visit your deployment. This should open your deployment environment in your browser.
+
 ```bash
 aspen% .venv-ebcli/bin/eb open aspen-myusername
 ```
+
 6. Remember to remove your environment when you are not using it.
+
 ```bash
 aspen% .venv-ebcli/bin/eb terminate aspen-myusername
 ```
 
 ### Granting access to the database.
 
-Access to the database is only granted if an EC2 instance is within the security group `eb-security-group`.  Locate your environment in the [Elastic Beanstalk configuration](https://us-west-2.console.aws.amazon.com/elasticbeanstalk/home) page.  Find the configuration page for your environment.  Then under the category "Instances", click edit.  Under EC2 Security Groups, add `eb-security-group` to your launch configuration and restart your environment.
+Access to the database is only granted if an EC2 instance is within the security group `eb-security-group`. Locate your environment in the [Elastic Beanstalk configuration](https://us-west-2.console.aws.amazon.com/elasticbeanstalk/home) page. Find the configuration page for your environment. Then under the category "Instances", click edit. Under EC2 Security Groups, add `eb-security-group` to your launch configuration and restart your environment.
 
 ## Database concerns
 
 ### Interacting with the local database in sql
 
 You can also connect to your local psql console by running:
+
 ```
 aspen% make local-pgconsole
 psql (13.1)
@@ -103,6 +116,7 @@ aspen_db=>
 ### Interacting with the local database in python
 
 It is possible to interact with the local database in ipython:
+
 ```
 aspen% make local-dbconsole
 docker-compose exec utility aspen-cli db --docker interact
@@ -123,7 +137,7 @@ In [3]:
 `aspen-cli db interact` has a `--profile` option that prints out every query that's executed and how long they take:
 
 ```
-aspen% make local-dbconsole-profile 
+aspen% make local-dbconsole-profile
 docker-compose exec utility aspen-cli db --docker interact --profile
 Python 3.9.1 (default, Feb  9 2021, 07:55:26)
 Type 'copyright', 'credits' or 'license' for more information
@@ -141,16 +155,17 @@ In [3]:
 ```
 
 ### Autogeneration of schema migration
-* after modifying/adding any database table/schema code run: 
-    * `make utility-alembic-autogenerate MESSAGE="descriptive message"`
-* this will create a migration file under `src/py/database_migrations`
-  * make sure you look this file over and verify that alembic made the appropriate changes
-* run `make utility-alembic-upgrade-head`
-  * this updates your local running database, make sure you use either `make pg-console` or `make db-console` to check that changes were applied appropriately! 
-  
+
+- after modifying/adding any database table/schema code run:
+  - `make utility-alembic-autogenerate MESSAGE="descriptive message"`
+- this will create a migration file under `src/py/database_migrations`
+  - make sure you look this file over and verify that alembic made the appropriate changes
+- run `make utility-alembic-upgrade-head`
+  - this updates your local running database, make sure you use either `make pg-console` or `make db-console` to check that changes were applied appropriately!
+
 ## Updating python dependencies
 
-To update python dependencies, update the [`Pipfile`](../../Pipfile) and run `make update-deps`.  This will update [`Pipfile.lock`](../../src/py/Pipfile.lock) and [`requirements.txt`](../../src/py/requirements.txt) (used by setup.py).
+To update python dependencies, update the [`Pipfile`](../../Pipfile) and run `make update-deps`. This will update [`Pipfile.lock`](../../src/py/Pipfile.lock) and [`requirements.txt`](../../src/py/requirements.txt) (used by setup.py).
 You will also need to rebuild local running docker containers by running `make local-rebuild`.
 
 If you add a third-party library (directly or indirectly) that does not support [python typing](https://docs.python.org/3/library/typing.html), then you may need to add an entry to [`mypy.ini`](../../mypy.ini) to let mypy know [not to expect type hints for that library](https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-type-hints-for-third-party-library).

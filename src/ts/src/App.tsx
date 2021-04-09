@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import style from "src/App.module.scss";
+import style from "./App.module.scss";
 import { fetchUserData } from "./common/api";
 import Data from "./data";
 import Landing from "./Landing";

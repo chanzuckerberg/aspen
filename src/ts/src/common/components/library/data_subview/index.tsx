@@ -5,8 +5,9 @@ import { DataTable } from "src/common/components";
 import style from "./index.module.scss";
 
 interface Props {
-  data?: BioinformaticsData[];
+  data?: TableItem[];
   headers: Header[];
+  renderer?: CustomRenderer;
 }
 
 interface InputOnChangeData {
@@ -16,14 +17,18 @@ interface InputOnChangeData {
 
 interface SearchState {
   searching?: boolean;
-  results?: BioinformaticsData[];
+  results?: TableItem[];
 }
 
 function searchReducer(state: SearchState, action: SearchState): SearchState {
   return { ...state, ...action };
 }
 
-const DataSubview: FunctionComponent<Props> = ({ data, headers }: Props) => {
+const DataSubview: FunctionComponent<Props> = ({
+  data,
+  headers,
+  renderer,
+}: Props) => {
   // we are modifying state using hooks, so we need a reducer
   const [state, dispatch] = useReducer(searchReducer, {
     results: data,
@@ -31,7 +36,10 @@ const DataSubview: FunctionComponent<Props> = ({ data, headers }: Props) => {
   });
 
   // search functions
-  const searcher = (_: unknown, fieldInput: InputOnChangeData) => {
+  const searcher = (
+    _event: React.ChangeEvent<HTMLInputElement>,
+    fieldInput: InputOnChangeData
+  ) => {
     const query = fieldInput.value;
     if (data === undefined) {
       return;
@@ -47,13 +55,10 @@ const DataSubview: FunctionComponent<Props> = ({ data, headers }: Props) => {
       Object.values(item).some((value) => regex.test(`${value}`))
     );
 
-    dispatch({
-      results: filteredData,
-      searching: false,
-    });
+    dispatch({ results: filteredData, searching: false });
   };
 
-  const render = (tableData: BioinformaticsData[]) => {
+  const render = (tableData: TableItem[]) => {
     return (
       <div className={style.samplesRoot}>
         <div className={style.searchBar}>
@@ -66,14 +71,14 @@ const DataSubview: FunctionComponent<Props> = ({ data, headers }: Props) => {
           />
         </div>
         <div className={style.samplesTable}>
-          <DataTable data={tableData} headers={headers} />
+          <DataTable data={tableData} headers={headers} renderer={renderer} />
         </div>
       </div>
     );
   };
 
   if (state.results === undefined) {
-    let tableData: BioinformaticsData[] = [];
+    let tableData: TableItem[] = [];
     if (data !== undefined) {
       dispatch({ results: data });
       tableData = data;

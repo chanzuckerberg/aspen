@@ -1,0 +1,58 @@
+@import "src/common/styles/colors";
+@import "src/common/styles/typography";
+@import "src/common/styles/spacing";
+@import "src/common/styles/corners";
+
+.background {
+  z-index: 100;
+  position: fixed;
+  top: 0em;
+  left: 0em;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  background-color: $gray-lightest;
+  opacity: 90%;
+}
+
+.modal {
+  z-index: 101;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: $white;
+  width: 25em;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    margin: $space-xxl;
+
+    .header {
+      @include font-header-xl;
+      margin-bottom: $space-s;
+    }
+
+    .body {
+      @include font-body-s;
+      margin-bottom: $space-xl;
+    }
+
+    .buttons {
+      flex-direction: row;
+      justify-content: flex-start;
+
+      div {
+        flex: 0 0 auto;
+        margin-right: $space-s;
+      }
+    }
+  }
+}
+
+.children {
+  &:hover {
+    cursor: pointer;
+  }
+}

@@ -2,6 +2,22 @@
 @import "src/common/styles/typography";
 @import "src/common/styles/colors";
 
+.cell {
+  @include font-header-s;
+  align-items: center;
+  margin: $space-xs 0 $space-xs 0;
+
+  .icon {
+    margin: 0 $space-l 0 $space-l;
+    fill: $gray-light;
+  }
+
+  a {
+    @include font-caps-xxs;
+    color: $primary;
+  }
+}
+
 .dataRoot {
   display: flex;
   flex-flow: column wrap;
