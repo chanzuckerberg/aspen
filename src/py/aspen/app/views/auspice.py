@@ -1,5 +1,8 @@
 import os
 import json
+import logging
+logger = logging.getLogger(__name__)
+
 from typing import Any, Iterable, Mapping, MutableSequence, Tuple
 from urllib.parse import quote_plus, unquote_plus
 
@@ -61,9 +64,10 @@ def auspice(phylo_tree_id: int):
             s3_client.generate_presigned_url(
                 "get_object",
                 Params={ "Bucket": phylo_tree.s3_bucket, "Key": phylo_tree.s3_key },
-                ExpiresIn=300
+                ExpiresIn=3600
             )
         )
+        logger.warn(presigned_url)
 
         quoted_url = quote_plus(presigned_url)
 
