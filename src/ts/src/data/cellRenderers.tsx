@@ -37,8 +37,10 @@ const TREE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
     </div>
   ),
   name: (value: JSONPrimitive): JSX.Element => {
+    const stringValue = value as string;
+    const treeId = stringValue.split(" ")[0]
     return (
-      <Modal data={createTreeModalInfo("")} className={style.cell}>
+      <Modal data={createTreeModalInfo(`https://nextstrain.org/fetch/auspice-backend.dev.genepi.czi.technology/api/auspice/view/${treeId}/auspice.json`)} className={style.cell}>
         {<TreeIcon className={style.icon} />}
         {value}
         {<ExternalLinkIcon className={style.icon} />}
