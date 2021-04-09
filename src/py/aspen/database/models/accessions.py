@@ -44,7 +44,7 @@ class Accession(Entity):
     public_identifier = Column(String, nullable=False)
 
     @staticmethod
-    def attach_to_entity(
+    def add_to_entity(
         entity: Entity,
         repository_type: PublicRepositoryType,
         public_identifier: str,

@@ -77,6 +77,19 @@ class PhyloRun(Workflow):
     """The arguments, in conjunction with the template file, used to produce the final
     builds file."""
 
+    template_file_path = Column(String, nullable=True)
+    """This is the path, relative to aspen root, for the builds template file.  For all
+    new builds, this should be set.  However, for historically imported """
+
+    template_args = Column(
+        JSONB,
+        nullable=False,
+        default=text("'{}'::jsonb"),
+        server_default=text("'{}'::jsonb"),
+    )
+    """The arguments, in conjunction with the template file, used to produce the final
+    builds file."""
+
     def tree(self) -> PhyloTree:
         """Find the tree resulting from this workflow."""
         for output in self.outputs:

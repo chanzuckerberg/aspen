@@ -27,10 +27,18 @@ def _format_created_date(sample: Sample) -> str:
 def _format_gisaid_accession(
     sample: Sample, entity_id_to_accession_map: Mapping[int, Accession]
 ) -> str:
-    uploaded_entity = sample.get_uploaded_entity()
-    accession = entity_id_to_accession_map.get(uploaded_entity.entity_id, None)
-    if accession is not None:
-        return accession.public_identifier
+    if sample.uploaded_pathogen_genome is not None:
+        accession = entity_id_to_accession_map.get(
+            sample.uploaded_pathogen_genome.entity_id, None
+        )
+        if accession is not None:
+            return accession.public_identifier
+    if sample.sequencing_reads_collection is not None:
+        accession = entity_id_to_accession_map.get(
+            sample.sequencing_reads_collection.entity_id, None
+        )
+        if accession is not None:
+            return accession.public_identifier
     return "NOT SUBMITTED"
 
 

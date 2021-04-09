@@ -142,7 +142,7 @@ class Entity(idbase):  # type: ignore
         """Adds an accession to this object."""
         from .accessions import Accession
 
-        Accession.attach_to_entity(
+        Accession.add_to_entity(
             self,
             repository_type,
             public_identifier,
