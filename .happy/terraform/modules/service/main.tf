@@ -36,6 +36,10 @@ resource aws_ecs_task_definition task_definition {
     "memory": 768,
     "environment": [
       {
+        "name": "wsgi.url_scheme",
+        "value": "https"
+      },
+      {
         "name": "REMOTE_DEV_PREFIX",
         "value": "${var.remote_dev_prefix}"
       },
