@@ -14,7 +14,7 @@
         "staging": {
             "aws_profile": "genepi-dev",
             "secret_arn": "happy/env-staging-config",
-            "terraform_directory": ".happy/terraform/envs/stage",
+            "terraform_directory": ".happy/terraform/envs/staging",
             "delete_protected": true,
             "auto_run_migrations": false,
             "log_group_prefix": "/aspen/staging"
