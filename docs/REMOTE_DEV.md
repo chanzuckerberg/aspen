@@ -43,7 +43,6 @@ Usage: happy create [OPTIONS] STACK_NAME
 Options:
   --tag TEXT          Tag name for docker image. Leave empty to generate one
                       automatically.
-
   --wait / --no-wait  wait for this to complete
   --help              Show this message and exit.
 ```
