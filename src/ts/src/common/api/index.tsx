@@ -2,6 +2,10 @@
 import axios from "axios";
 import { jsonToType } from "src/common/utils";
 
+export const DEFAULT_FETCH_OPTIONS: RequestInit = {
+  credentials: "include",
+};
+
 /** Generic functions to interface with the backend API **/
 
 const API_KEY_TO_TYPE: Record<string, string> = {

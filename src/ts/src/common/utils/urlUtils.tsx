@@ -1,6 +1,6 @@
-export function stripProtocol(url: string | undefined): string | undefined {
-  if (url === undefined) {
-    return undefined;
+export function stripProtocol(url?: string): string {
+  if (!url) {
+    return "";
   }
   const re = /^.*:\/\//i;
   return url.replace(re, "");

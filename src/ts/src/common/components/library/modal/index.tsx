@@ -1,6 +1,7 @@
 import cx from "classnames";
 import React, { FunctionComponent, useReducer } from "react";
-import { Button } from "src/common/components";
+import { Button as DefaultButton } from "src/common/components";
+import { ButtonInfo, ModalInfo } from "src/common/types/ui";
 import style from "./index.module.scss";
 
 interface Props {
@@ -35,8 +36,9 @@ const Modal: FunctionComponent<Props> = ({
     }
 
     const buttons = buttonInfo.map((button, index) => {
-      let link: string | undefined = button.link;
-      let onClick: (() => void) | undefined = undefined;
+      let link = button.link;
+      let onClick;
+      const Button = button.Button || DefaultButton;
 
       if (link === "cancel") {
         link = undefined;

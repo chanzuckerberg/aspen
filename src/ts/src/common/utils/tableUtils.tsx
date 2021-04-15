@@ -1,8 +1,12 @@
+import { memoize } from "lodash/fp";
+import { ModalInfo } from "../types/ui";
+import { createConfirmButton } from "./TreeModal/ConfirmButton";
+
 /* eslint-disable react/display-name */
 
 const UNDEFINED_TEXT = "---";
 
-function createTableCellRenderer(
+export function createTableCellRenderer(
   customRenderers: Record<string | number, CellRenderer>,
   defaultRenderer: CellRenderer
 ): CustomRenderer {
@@ -20,15 +24,15 @@ function createTableCellRenderer(
   };
 }
 
-function createTreeModalInfo(link: string): ModalInfo {
+export const createTreeModalInfo = memoize(createTreeModalInfo_);
+
+function createTreeModalInfo_(treeId: string): ModalInfo {
   return {
     body:
       "You are leaving Aspen and sending your data to a private visualization on auspice.us, which is not controlled by Aspen.",
     buttons: [
       {
-        content: "Confirm",
-        link: link,
-        type: "primary",
+        Button: createConfirmButton(treeId),
       },
       {
         content: "Cancel",
@@ -40,5 +44,3 @@ function createTreeModalInfo(link: string): ModalInfo {
       "Please confirm you're ready to send your data to Auspice to see your tree.",
   };
 }
-
-export { createTableCellRenderer, createTreeModalInfo };
