@@ -147,6 +147,15 @@ services:
       args:
         - BUILDKIT_INLINE_CACHE=1
     command: ["sleep", "infinity"]
+  cloudwatch-alerting-lambda:
+    image: "${DOCKER_REPO}aspen-cloudwatch-alerting-lambda"
+    build:
+      context: docker/cloudwatch-alerting-lambda
+      cache_from:
+        - "${DOCKER_REPO}aspen-cloudwatch-alerting-lambda:branch-trunk"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    command: ["sleep", "infinity"]
 volumes:
   database:
   localstack:

@@ -31,6 +31,7 @@ locals {
   backend_image_repo    = local.secret["ecrs"]["backend"]["url"]
   nextstrain_image_repo = local.secret["ecrs"]["nextstrain"]["url"]
   nextstrain_error_repo = local.secret["ecrs"]["nextstrain-errorhandler"]["url"]
+  cloudwatch_alert_repo = local.secret["ecrs"]["cloudwatch-alert"]["url"]
   batch_role_arn        = local.secret["batch_queues"]["nextstrain"]["role_arn"]
   job_queue_arn         = local.secret["batch_queues"]["nextstrain"]["queue_arn"]
   external_dns          = local.secret["external_zone_name"]
@@ -145,6 +146,19 @@ module nextstrain_error_lambda {
   stack_resource_prefix = local.stack_resource_prefix
   image                 = "${local.nextstrain_error_repo}:${local.image_tag}"
   name                  = "nextstrainfailures"
+  custom_stack_name     = local.custom_stack_name
+  remote_dev_prefix     = local.remote_dev_prefix
+  deployment_stage      = local.deployment_stage
+  lambda_execution_role = local.lambda_execution_role
+  subnets               = local.subnets
+  security_groups       = local.security_groups
+}
+
+module cloudwatch_alert_lambda {
+  source                = "../lambda"
+  stack_resource_prefix = local.stack_resource_prefix
+  image                 = "${local.cloudwatch_alert_repo}:${local.image_tag}"
+  name                  = "cloudwatchalert"
   custom_stack_name     = local.custom_stack_name
   remote_dev_prefix     = local.remote_dev_prefix
   deployment_stage      = local.deployment_stage
