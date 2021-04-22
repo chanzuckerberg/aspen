@@ -9,6 +9,6 @@ ENV SLACK_OAUTH_TOKEN_SECRET_NAME=${SLACK_OAUTH_TOKEN_SECRET_NAME}
 
 WORKDIR /lambda
 
-COPY app.py requirements.txt .
+COPY app.py requirements.txt ./
 RUN python3 -m pip install -U pip
 RUN python3 -m pip install -r requirements.txt
