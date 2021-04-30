@@ -9,6 +9,7 @@ import click
 from IPython.terminal.embed import InteractiveShellEmbed
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import expression
+from sqlalchemy_utils import create_database, database_exists, drop_database
 
 from aspen import covidhub_import
 from aspen.cli.toplevel import cli
@@ -93,8 +94,6 @@ def set_passwords_from_secret(ctx):
 @click.pass_context
 def setup(ctx, load_data):
     """If the database we're trying to connect to doesn't exist: create it and load a default dataset into it"""
-    # TODO - we can move this to the top when https://github.com/kvesteri/sqlalchemy-utils/pull/506 is merged
-    from sqlalchemy_utils import create_database, database_exists
 
     conf = ctx.obj["CONFIG"]
     engine = ctx.obj["ENGINE"]
@@ -122,9 +121,6 @@ def create_db(ctx):
 @db.command("drop")
 @click.pass_context
 def drop(ctx):
-    # TODO - we can move this to the top when https://github.com/kvesteri/sqlalchemy-utils/pull/506 is merged
-    from sqlalchemy_utils import database_exists, drop_database
-
     conf = ctx.obj["CONFIG"]
     db_uri = conf.DATABASE_URI
     if database_exists(db_uri):

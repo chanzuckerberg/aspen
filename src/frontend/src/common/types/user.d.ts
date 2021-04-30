@@ -17,4 +17,5 @@ interface User {
   id: number;
   name: string;
   systemAdmin: boolean;
+  agreedToTos: boolean;
 }

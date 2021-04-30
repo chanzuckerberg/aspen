@@ -14,6 +14,17 @@ export const DEFAULT_FETCH_OPTIONS: RequestInit = {
   credentials: "include",
 };
 
+export const DEFAULT_PUT_OPTIONS: RequestInit = {
+  credentials: "include",
+  method: "PUT",
+};
+
+export const DEFAULT_HEADERS_MUTATION_OPTIONS: RequestInit = {
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
+
 /** Generic functions to interface with the backend API **/
 
 const API_KEY_TO_TYPE: Record<string, string> = {
@@ -43,6 +54,7 @@ async function apiResponse<T extends APIResponse>(
   const response = await axios.get(process.env.API_URL + endpoint, {
     withCredentials: true,
   });
+
   const convertedData = keys.map((key, index) => {
     type keyType = T[typeof key];
     const typeData = response.data[key];
@@ -70,9 +82,19 @@ const USER_MAP = new Map<string, keyof User>([
   ["auth0_user_id", "auth0UserId"],
   ["group_admin", "groupAdmin"],
   ["system_admin", "systemAdmin"],
+  ["group_id", "groupdId"],
+  ["agreed_to_tos", "agreedToTos"],
 ]);
 export const fetchUserData = (): Promise<UserResponse> =>
   apiResponse<UserResponse>(["group", "user"], [null, USER_MAP], API.USER_DATA);
+
+export const updateUserData = (user: Partial<User>): Promise<Response> => {
+  return fetch(process.env.API_URL + API.USER_DATA, {
+    ...DEFAULT_PUT_OPTIONS,
+    ...DEFAULT_HEADERS_MUTATION_OPTIONS,
+    body: JSON.stringify(user),
+  });
+};
 
 interface SampleResponse extends APIResponse {
   samples: Sample[];
@@ -97,3 +119,7 @@ const TREE_MAP = new Map<string, keyof Tree>([
 ]);
 export const fetchTrees = (): Promise<TreeResponse> =>
   apiResponse<TreeResponse>(["phylo_trees"], [TREE_MAP], API.PHYLO_TREES);
+
+export const logout = (): Promise<Response> => {
+  return fetch(process.env.API_URL + API.LOG_OUT, DEFAULT_FETCH_OPTIONS);
+};

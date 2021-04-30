@@ -35,7 +35,7 @@ def logout():
     session.clear()
     # Redirect user to logout endpoint
     params = {
-        "returnTo": url_for("serve", _external=True),
+        "returnTo": url_for("serve", _external=True, _scheme="https"),
         "client_id": application.aspen_config.AUTH0_CLIENT_ID,
     }
     return redirect(auth0.api_base_url + "/v2/logout?" + urlencode(params))
