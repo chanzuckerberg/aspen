@@ -6,7 +6,7 @@ States:
     Type: Task
     Resource: arn:aws:states:::lambda:invoke
     Parameters:
-      FunctionName: "${preprocess-input}"
+      FunctionName: "swipe-${deployment_environment}-preprocess-input"
       Payload: &PassthroughStatePayload
         ExecutionId.$: $$.Execution.Id
         CurrentState.$: $$.State.Name
@@ -55,7 +55,7 @@ States:
     Type: Task
     Resource: arn:aws:states:::lambda:invoke
     Parameters: &ReadOutputParameters
-      FunctionName: "${process-stage-output}"
+      FunctionName: "swipe-${deployment_environment}-process-stage-output"
       Payload: *PassthroughStatePayload
     OutputPath: $.Payload
     Next: HandleSuccess
@@ -100,7 +100,7 @@ States:
     Type: Task
     Resource: arn:aws:states:::lambda:invoke
     Parameters:
-      FunctionName: "${handle-success}"
+      FunctionName: "swipe-${deployment_environment}-handle-success"
       Payload: *PassthroughStatePayload
     OutputPath: $.Payload
     End: true
@@ -110,7 +110,7 @@ States:
     Type: Task
     Resource: arn:aws:states:::lambda:invoke
     Parameters:
-      FunctionName: "${handle-failure}"
+      FunctionName: "swipe-${deployment_environment}-handle-failure"
       Payload: *PassthroughStatePayload
     OutputPath: $.Payload
     End: true

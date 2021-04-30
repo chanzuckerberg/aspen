@@ -18,6 +18,11 @@ variable ec2_queue_arn {
   description = "ARN of the batch job queue"
 }
 
+variable spot_queue_arn {
+  type        = string
+  description = "ARN of the batch job queue"
+}
+
 variable role_arn {
   type        = string
   description = "ARN for the role assumed by tasks"

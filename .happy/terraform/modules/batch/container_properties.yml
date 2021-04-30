@@ -7,8 +7,66 @@
 
 image: "${batch_docker_image}"
 command:
-  - "echo"
-  - "hello"
+  - "/bin/bash"
+  - "-c"
+  - "for i in \"$@\"; do eval \"$i\"; done; cd /"
+  - "swipe"
+  - "set -a"
+  - "if [ -f /etc/environment ]; then source /etc/environment; fi"
+  - "if [ -f /etc/default/locale ]; then source /etc/default/locale; else export LC_ALL=C.UTF-8 LANG=C.UTF-8; fi"
+  - "set +a"
+  - >-
+    while true; do
+    if curl -sf http://169.254.169.254/latest/meta-data/spot/instance-action; then
+    echo WARNING: THIS SPOT INSTANCE HAS BEEN SCHEDULED FOR TERMINATION >> /dev/stderr;
+    fi;
+    sleep 10;
+    done &
+  - >-
+    put_metric() {
+    aws cloudwatch put-metric-data --metric-name $1 --namespace swipe-$DEPLOYMENT_ENVIRONMENT --unit Percent --value $2 --dimensions SFNCurrentState=$SFN_CURRENT_STATE;
+    }
+  - >-
+    while true; do
+    put_metric ScratchSpaceInUse $(df --output=pcent /mnt | tail -n 1 | cut -f 1 -d %);
+    put_metric CPULoad $(cat /proc/loadavg | cut -f 1 -d ' ' | cut -f 2 -d .);
+    put_metric MemoryInUse $(python3 -c 'import psutil; m=psutil.virtual_memory(); print(100*(1-m.available/m.total))');
+    sleep 60;
+    done &
+  - "mkdir -p /mnt/download_cache; touch /mnt/download_cache/.cleaner_lock"
+  - >-
+    clean_wd() {
+    (shopt -s nullglob;
+    for wf_log in /mnt/20??????_??????_*/workflow.log; do
+    flock -n $wf_log rm -rf $(dirname $wf_log) || true;
+    done;
+    flock -x /mnt/download_cache/.cleaner_lock clean_download_cache.sh /mnt/download_cache $DOWNLOAD_CACHE_MAX_GB)
+    }
+  - "clean_wd"
+  - "df -h / /mnt"
+  - 'export MINIWDL__S3_PROGRESSIVE_UPLOAD__URI_PREFIX=$(dirname "$WDL_OUTPUT_URI")'
+  - "if [ -f /etc/profile ]; then source /etc/profile; fi"
+  - "miniwdl --version"
+  - "set -euo pipefail"
+  - 'export CURRENT_STATE=$(echo "$SFN_CURRENT_STATE" | sed -e s/SPOT// -e s/EC2//)'
+  - 'aws s3 cp "$WDL_WORKFLOW_URI" .'
+  - 'aws s3 cp "$WDL_INPUT_URI" wdl_input.json'
+  - >-
+    handle_error() {
+    OF=wdl_output.json;
+    EP=.cause.stderr_file;
+    if jq -re .error $OF; then
+    if jq -re $EP $OF; then
+    if tail -n 1 $(jq -r $EP $OF) | jq -re .wdl_error_message; then
+    tail -n 1 $(jq -r $EP $OF) > $OF;
+    fi;
+    fi;
+    aws s3 cp $OF "$WDL_OUTPUT_URI";
+    fi
+    }
+  - "trap handle_error EXIT"
+  - 'miniwdl run --dir /mnt $(basename "$WDL_WORKFLOW_URI") --input wdl_input.json --verbose --error-json --log-json > wdl_output.json'
+  - "clean_wd"
 environment:
   - name: "AWS_DEFAULT_REGION"
     value: "${aws_region}"
@@ -18,6 +76,32 @@ environment:
     value: "${remote_dev_prefix}"
   - name: "FRONTEND_URL"
     value: "${frontend_url}"
+  - name: "WDL_INPUT_URI"
+    value: "Set this variable to the S3 URI of the WDL input JSON"
+  - name: "WDL_WORKFLOW_URI"
+    value: "Set this variable to the S3 URI of the WDL workflow"
+  - name: "WDL_OUTPUT_URI"
+    value: "Set this variable to the S3 URI where the WDL output JSON will be written"
+  - name: "SFN_EXECUTION_ID"
+    value: "Set this variable to the current step function execution ARN"
+  - name: "SFN_CURRENT_STATE"
+    value: "Set this variable to the current step function state name, like HostFilterEC2 or HostFilterSPOT"
+  - name: "DEPLOYMENT_ENVIRONMENT"
+    value: "${deployment_environment}"
+  - name: "AWS_DEFAULT_REGION"
+    value: "${aws_region}"
+  - name: "MINIWDL__S3PARCP__DOCKER_IMAGE"
+    value: "${batch_docker_image}"
+  - name: "MINIWDL__DOWNLOAD_CACHE__PUT"
+    value: "true"
+  - name: "MINIWDL__DOWNLOAD_CACHE__GET"
+    value: "true"
+  - name: "MINIWDL__DOWNLOAD_CACHE__DIR"
+    value: /mnt/download_cache
+  - name: "MINIWDL__DOWNLOAD_CACHE__DISABLE_PATTERNS"
+    value: '["s3://swipe-samples-*/*"]'
+  - name: "DOWNLOAD_CACHE_MAX_GB"
+    value: "500"
 jobRoleArn: "${batch_job_role_arn}"
 volumes:
   - name: "scratch"

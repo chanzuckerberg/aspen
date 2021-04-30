@@ -90,7 +90,7 @@ module frontend_service {
   service_port          = 3000
   cmd                   = local.frontend_cmd
   deployment_stage      = local.deployment_stage
-  step_function_arn     = module.nextstrain_sfn.step_function_arn
+  step_function_arn     = module.gisaid_sfn.step_function_arn
   host_match            = try(join(".", [module.frontend_dns[0].dns_prefix, local.external_dns]), "")
   priority              = local.priority
   api_url               = local.backend_url
@@ -116,7 +116,7 @@ module backend_service {
   service_port          = 3000
   cmd                   = local.backend_cmd
   deployment_stage      = local.deployment_stage
-  step_function_arn     = module.nextstrain_sfn.step_function_arn
+  step_function_arn     = module.gisaid_sfn.step_function_arn
   host_match            = try(join(".", [module.backend_dns[0].dns_prefix, local.external_dns]), "")
   priority              = local.priority
   api_url               = local.backend_url
@@ -133,6 +133,7 @@ module gisaid_sfn {
   stack_resource_prefix  = local.stack_resource_prefix
   job_definition_name    = module.gisaid_batch.batch_job_definition
   ec2_queue_arn          = local.ec2_queue_arn
+  spot_queue_arn          = local.spot_queue_arn
   role_arn               = local.sfn_role_arn
   custom_stack_name      = local.custom_stack_name
   deployment_stage       = local.deployment_stage
