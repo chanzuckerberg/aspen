@@ -7,17 +7,18 @@ States:
     Resource: arn:aws:states:::batch:submitJob.sync
     Parameters:
       JobQueue: "${batch_ec2_job_queue_name}"
-      JobName.$: $$.Execution.Name
+      JobName: ingest-gisaid
       JobDefinition: &JobDefinition "${batch_job_definition_name}"
       Timeout: &RunBatchTimeout
         AttemptDurationSeconds: 18000 # 5 hours
       ContainerOverrides:
-        Memory.$: $.RunEC2Memory
+        Memory: 8192
+        Command: ["trunk", "src/backend/aspen/workflows/ingest_gisaid/ingest.sh"]
         Environment: &RunEnvironment
           - Name: INPUT_JOB_TEST
             Value.$: $.INPUT_JOB_TEST
     ResultPath: $.BatchJobDetails.Run
-    End: true
+    Next: Transform
     Retry: &BatchRetryConfig
       - ErrorEquals: ["Batch.AWSBatchException"]
         IntervalSeconds: 15
@@ -27,17 +28,18 @@ States:
     Resource: arn:aws:states:::batch:submitJob.sync
     Parameters:
       JobQueue: "${batch_ec2_job_queue_name}"
-      JobName.$: $$.Execution.Name
+      JobName: transform-gisaid
       JobDefinition: &JobDefinition "${batch_job_definition_name}"
       Timeout: &RunBatchTimeout
         AttemptDurationSeconds: 18000 # 5 hours
       ContainerOverrides:
-        Memory.$: $.RunEC2Memory
+        Memory: 15000
+        Command: ["trunk", "src/backend/aspen/workflows/transform_gisaid/transform.sh", "TODO_ENTITY_ID_GOES_HERE"]
         Environment: &RunEnvironment
           - Name: INPUT_JOB_TEST
             Value.$: $.INPUT_JOB_TEST
     ResultPath: $.BatchJobDetails.Run
-    End: true
+    Next: Align
     Retry: &BatchRetryConfig
       - ErrorEquals: ["Batch.AWSBatchException"]
         IntervalSeconds: 15
@@ -47,12 +49,14 @@ States:
     Resource: arn:aws:states:::batch:submitJob.sync
     Parameters:
       JobQueue: "${batch_ec2_job_queue_name}"
-      JobName.$: $$.Execution.Name
+      JobName: align-gisaid
       JobDefinition: &JobDefinition "${batch_job_definition_name}"
       Timeout: &RunBatchTimeout
         AttemptDurationSeconds: 18000 # 5 hours
       ContainerOverrides:
-        Memory.$: $.RunEC2Memory
+        Vcpus: 32
+        Memory: 420000
+        Command: ["trunk", "src/backend/aspen/workflows/align_gisaid/align.sh", "TODO_ENTITY_ID_GOES_HERE"]
         Environment: &RunEnvironment
           - Name: INPUT_JOB_TEST
             Value.$: $.INPUT_JOB_TEST

@@ -52,4 +52,4 @@ logConfiguration:
 # runtime, causing it to become the concurrency-limiting factor for job packing. (Additional logic is required in
 # miniwdl to set the memory hard limits on child containers running WDL tasks.)
 vcpus: 1
-memory: 4
+memory: 1024
