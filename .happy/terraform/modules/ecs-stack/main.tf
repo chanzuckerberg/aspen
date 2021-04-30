@@ -127,11 +127,11 @@ module backend_service {
   wait_for_steady_state = local.wait_for_steady_state
 }
 
-module nextstrain_sfn {
-  source                 = "../sfn"
-  app_name               = "nextstrain"
+module gisaid_sfn {
+  source                 = "../gisaid-sfn"
+  app_name               = "gisaid"
   stack_resource_prefix  = local.stack_resource_prefix
-  job_definition_name    = module.nextstrain_batch.batch_job_definition
+  job_definition_name    = module.gisaid_batch.batch_job_definition
   ec2_queue_arn          = local.ec2_queue_arn
   role_arn               = local.sfn_role_arn
   custom_stack_name      = local.custom_stack_name
@@ -162,7 +162,7 @@ module delete_db {
   deployment_stage      = local.deployment_stage
 }
 
-module nextstrain_batch {
+module gisaid_batch {
   source                = "../batch"
   app_name              = "nextstrain"
   stack_resource_prefix = local.stack_resource_prefix

@@ -1,0 +1,84 @@
+Comment: SWIPE single-wdl pipeline entry point
+StartAt: RunEC2
+TimeoutSeconds: 259200 # 72 hours (total execution run time, including Batch job scheduling delays)
+States:
+  Ingest:
+    Type: Task
+    Resource: arn:aws:states:::batch:submitJob.sync
+    Parameters:
+      JobQueue: "${batch_ec2_job_queue_name}"
+      JobName.$: $$.Execution.Name
+      JobDefinition: &JobDefinition "${batch_job_definition_name}"
+      Timeout: &RunBatchTimeout
+        AttemptDurationSeconds: 18000 # 5 hours
+      ContainerOverrides:
+        Memory.$: $.RunEC2Memory
+        Environment: &RunEnvironment
+          - Name: INPUT_JOB_TEST
+            Value.$: $.INPUT_JOB_TEST
+    ResultPath: $.BatchJobDetails.Run
+    End: true
+    Retry: &BatchRetryConfig
+      - ErrorEquals: ["Batch.AWSBatchException"]
+        IntervalSeconds: 15
+        MaxAttempts: 2
+  Transform:
+    Type: Task
+    Resource: arn:aws:states:::batch:submitJob.sync
+    Parameters:
+      JobQueue: "${batch_ec2_job_queue_name}"
+      JobName.$: $$.Execution.Name
+      JobDefinition: &JobDefinition "${batch_job_definition_name}"
+      Timeout: &RunBatchTimeout
+        AttemptDurationSeconds: 18000 # 5 hours
+      ContainerOverrides:
+        Memory.$: $.RunEC2Memory
+        Environment: &RunEnvironment
+          - Name: INPUT_JOB_TEST
+            Value.$: $.INPUT_JOB_TEST
+    ResultPath: $.BatchJobDetails.Run
+    End: true
+    Retry: &BatchRetryConfig
+      - ErrorEquals: ["Batch.AWSBatchException"]
+        IntervalSeconds: 15
+        MaxAttempts: 2
+  Align:
+    Type: Task
+    Resource: arn:aws:states:::batch:submitJob.sync
+    Parameters:
+      JobQueue: "${batch_ec2_job_queue_name}"
+      JobName.$: $$.Execution.Name
+      JobDefinition: &JobDefinition "${batch_job_definition_name}"
+      Timeout: &RunBatchTimeout
+        AttemptDurationSeconds: 18000 # 5 hours
+      ContainerOverrides:
+        Memory.$: $.RunEC2Memory
+        Environment: &RunEnvironment
+          - Name: INPUT_JOB_TEST
+            Value.$: $.INPUT_JOB_TEST
+    ResultPath: $.BatchJobDetails.Run
+    End: true
+    Retry: &BatchRetryConfig
+      - ErrorEquals: ["Batch.AWSBatchException"]
+        IntervalSeconds: 15
+        MaxAttempts: 2
+  RunEC2:
+    Type: Task
+    Resource: arn:aws:states:::batch:submitJob.sync
+    Parameters:
+      JobQueue: "${batch_ec2_job_queue_name}"
+      JobName.$: $$.Execution.Name
+      JobDefinition: &JobDefinition "${batch_job_definition_name}"
+      Timeout: &RunBatchTimeout
+        AttemptDurationSeconds: 18000 # 5 hours
+      ContainerOverrides:
+        Memory.$: $.RunEC2Memory
+        Environment: &RunEnvironment
+          - Name: INPUT_JOB_TEST
+            Value.$: $.INPUT_JOB_TEST
+    ResultPath: $.BatchJobDetails.Run
+    End: true
+    Retry: &BatchRetryConfig
+      - ErrorEquals: ["Batch.AWSBatchException"]
+        IntervalSeconds: 15
+        MaxAttempts: 2
