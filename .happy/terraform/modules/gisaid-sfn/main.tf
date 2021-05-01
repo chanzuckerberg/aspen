@@ -48,9 +48,9 @@ locals {
             length(lookup(state, "Next", "")) > 0 ? join("", [job["name"], state["Next"]]) : null, # If this had a Next parameter, forward it along to the next step in this job
             lookup(state, "End", false) ? try(join("", [local.jobs[i+1]["name"], local.first_step]), null) : null # If this was an end state, send it to the next job FIXME this is hardcoded
           ), null)
-        CatchBlock: length(try(state["Catch"][0]["Next"], "")) == 0 ? {} : { # FIXME this assumes one catch block max per step
-          Catch: [ merge(state["Catch"][0], {
-            Next: contains(local.final_errors, state["Catch"][0]["Next"]) ? state["Catch"][0]["Next"] : join("", [job["name"], state["Catch"][0]["Next"]])
+        CatchBlock: length(try(state["Catch"], "")) == 0 ? {} : { # FIXME this assumes one catch block max per step
+          Catch: [ for catch in state["Catch"]: merge(catch, {
+            Next: contains(local.final_errors, catch["Next"]) ? catch["Next"] : join("", [job["name"], catch["Next"]])
         })]}
     } if !contains(local.final_errors, statename)
   }}
@@ -65,7 +65,7 @@ locals {
       {
         (local.next_keys[job["name"]][statename]["Key"]) = local.next_keys[job["name"]][statename]["Key"] == "End" ? local.next_keys[job["name"]][statename]["End"] : local.next_keys[job["name"]][statename]["Next"]
       },
-      local.next_keys[job["name"]][statename]["CatchBlock"], # Note, the ordering is important.
+      local.next_keys[job["name"]][statename]["CatchBlock"], # Note, the ordering of this merge is important.
     )} if !contains(local.final_errors, statename)
   ]])...)
   new_sfn = {
