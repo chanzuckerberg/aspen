@@ -19,39 +19,57 @@ locals {
     batch_spot_job_queue_name = var.spot_queue_arn
     batch_job_definition_name = var.job_definition_name
   })))
-  jobs = {
-    "Ingest" = {
-      "memory" = 1024
-      "vcpus" = 1
-      "next" = "transform"
+  jobs = [
+    { name = "Ingest"
+      memory = 1024
+      vcpus = 1
+      next = "transform"
+    },
+    { name = "Transform"
+      memory = 1024
+      vcpus = 1
+      next = "align"
+    },
+    { name = "Align"
+      memory = 1024
+      vcpus = 1
     }
-    "Transform" = {
-      "memory" = 1024
-      "vcpus" = 1
-      "next" = "align"
-    }
-    "Align" = {
-      "memory" = 1024
-      "vcpus" = 1
-      "end" = true
-    }
-  }
+  ]
+  first_step = "PreprocessInput" # FIXME hardcoding!
+  final_errors = ["HandleFailure"] # FIXME hardcoding
+
+  # Figure out how to wire up one state to the next
+  next_keys = { for i, job in local.jobs: job["name"] => {
+    for statename, state in local.states: statename => {
+        Key: lookup(state, "End", false) && try(length(job[i+1]["name"]), 0) == 0 ? "End" : "Next"
+        End: lookup(state, "End", false) && try(length(job[i+1]["name"]), 0) == 0 ? true : false
+        Next: try(coalesce(
+            lookup(state, "Next", "") == "HandleFailure" ? "HandleFailure" : null, # HandleFailure is always an end state
+            length(lookup(state, "Next", "")) > 0 ? join("", [job["name"], state["Next"]]) : null, # If this had a Next parameter, forward it along to the next step in this job
+            lookup(state, "End", false) ? try(join("", [job[i+1]["name"], local.first_step]), null) : null # If this was an end state, send it to the next job FIXME this is hardcoded
+          ), null)
+        CatchBlock: length(try(state["Catch"]["Next"], "")) == 0 ? {} : {
+          Catch: {
+            Next: contains(local.final_errors, state["Catch"]["Next"]) ? state["Catch"]["Next"] : join("", job["name"], state["Catch"]["Next"])
+        }}
+    } if contains(local.final_errors, statename)
+  }}
+
   # Make a copy of our desired states
   states = local.sfn_def["States"]
   # Make a copy for each job, but make the ends of each job point to the next.
-  new_states = merge(flatten([ for jobname, conf in local.jobs: [
+  new_states = merge(flatten([ for job in local.jobs: [
     for statename, state in local.states: {
-    join("", [jobname, statename]) = merge(state, {
-      "End": lookup(state, "End", false) ? try(join("", [jobname, conf["next"]]), true) : false
-      "Next": coalesce(
-      lookup(state, "Next", "") == "HandleFailure" ? "HandleFailure" : null, # HandleFailure is always an end state
-      lookup(state, "End", false) ? try(join("", [jobname, conf["next"]]), null) : null, # If this was an end state, send it to the next job
-      "${jobname}${statename}") # Send it to the next state within this job. FIXME this isn't handling the case where we need to actually end at the last HandleSuccess.
-    })} if statename != "HandleFailure"
+    join("", [job["name"], statename]) = merge(state,
+      local.next_keys[job["name"]][statename]["CatchBlock"],
+      {
+        (local.next_keys[job["name"]][statename]["Key"]) = local.next_keys[job["name"]][statename]["Key"] == "End" ? local.next_keys[job["name"]][statename]["End"] : local.next_keys[job["name"]][statename]["Next"]
+      }
+    )} if contains(local.final_errors, statename)
   ]])...)
   new_sfn = {
     "Comment" = local.sfn_def["Comment"]
-    "StartAt" = "IngestPreprocessInput"
+    "StartAt" = "Ingest${local.first_step}" # fixme
     "TimeoutSeconds" = local.sfn_def["TimeoutSeconds"]
     "States" = merge(local.new_states, {"HandleFailure": local.states["HandleFailure"]})
   }
