@@ -40,26 +40,24 @@ locals {
 
   # Figure out how to wire up one state to the next
   next_keys = { for i, job in local.jobs: job["name"] => {
-    for statename, state in local.states: statename => {
+    for statename, state in local.sfn_def["States"]: statename => {
         Key: lookup(state, "End", false) && try(length(local.jobs[i+1]["name"]), 0) == 0 ? "End" : "Next"
         End: lookup(state, "End", false) && try(length(local.jobs[i+1]["name"]), 0) == 0 ? true : false
         Next: try(coalesce(
             lookup(state, "Next", "") == "HandleFailure" ? "HandleFailure" : null, # HandleFailure is always an end state
             length(lookup(state, "Next", "")) > 0 ? join("", [job["name"], state["Next"]]) : null, # If this had a Next parameter, forward it along to the next step in this job
-            lookup(state, "End", false) ? try(join("", [local.jobs[i+1]["name"], local.first_step]), null) : null # If this was an end state, send it to the next job FIXME this is hardcoded
+            lookup(state, "End", false) ? try(join("", [local.jobs[i+1]["name"], local.first_step]), null) : null # If this was an end state, send it to the next job
           ), null)
-        CatchBlock: length(try(state["Catch"], "")) == 0 ? {} : { # FIXME this assumes one catch block max per step
+        CatchBlock: length(try(state["Catch"], "")) == 0 ? {} : {
           Catch: [ for catch in state["Catch"]: merge(catch, {
             Next: contains(local.final_errors, catch["Next"]) ? catch["Next"] : join("", [job["name"], catch["Next"]])
         })]}
     } if !contains(local.final_errors, statename)
   }}
 
-  # Make a copy of our desired states
-  states = local.sfn_def["States"]
-  # Make a copy for each job, but make the ends of each job point to the next.
+  # Generate a clean copy of all the non-final-error states
   new_states = merge(flatten([ for job in local.jobs: [
-    for statename, state in local.states: {
+    for statename, state in local.sfn_def["States"]: {
     join("", [job["name"], statename]) = merge(
       { for key, val in state: key => val if !contains(["Next", "End"], key) }, # All of the existing keys except End and Next
       {
@@ -68,12 +66,15 @@ locals {
       local.next_keys[job["name"]][statename]["CatchBlock"], # Note, the ordering of this merge is important.
     )} if !contains(local.final_errors, statename)
   ]])...)
-  new_sfn = {
-    "Comment" = local.sfn_def["Comment"]
-    "StartAt" = "${local.jobs[0]["name"]}${local.first_step}"
-    "TimeoutSeconds" = local.sfn_def["TimeoutSeconds"]
-    "States" = merge(local.new_states, {for err_state in local.final_errors: err_state => local.states[err_state]})
-  }
+
+  # Create a new sfn with our new states block.
+  new_sfn = merge(
+     { for k, v in local.sfn_def: k => v if k != "States" },
+     {
+       "StartAt" = "${local.jobs[0]["name"]}${local.first_step}"
+       "States" = merge(local.new_states, {for err_state in local.final_errors: err_state => local.sfn_def["States"][err_state]})
+     }
+  )
 }
 resource "aws_sfn_state_machine" "state_machine" {
   name     = "${var.stack_resource_prefix}-${var.deployment_stage}-${var.custom_stack_name}-${var.app_name}-sfn"
