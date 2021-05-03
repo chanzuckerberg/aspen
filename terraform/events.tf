@@ -38,7 +38,7 @@ resource "aws_cloudwatch_event_target" "ingest-gisaid-target" {
     "ContainerOverrides": {
       "Command": [
         "trunk",
-        "src/py/workflows/ingest_gisaid/ingest.sh"
+        "src/backend/aspen/workflows/ingest_gisaid/ingest.sh"
       ]
     }
   }
@@ -72,7 +72,7 @@ resource "aws_cloudwatch_event_target" "update-czb-gisaid-target" {
     "ContainerOverrides": {
       "Command": [
         "trunk",
-        "src/py/workflows/update_czb_gisaid/update.sh"
+        "src/backend/aspen/workflows/update_czb_gisaid/update.sh"
       ]
     }
   }

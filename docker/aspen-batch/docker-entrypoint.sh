@@ -21,8 +21,8 @@ else
     git checkout FETCH_HEAD
 
     /aspen/.venv/bin/pip install -U pip
-    /aspen/.venv/bin/pip install -e src/py/third-party/sqlalchemy-enum-tables/
-    /aspen/.venv/bin/pip install -e src/py/
+    /aspen/.venv/bin/pip install -e src/backend/third-party/sqlalchemy-enum-tables/
+    /aspen/.venv/bin/pip install -e src/backend/
 
     shift
     $*

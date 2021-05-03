@@ -1,0 +1,21 @@
+{
+  "tree": {
+    "name": "public_identifier_1",
+    "children": [
+      {
+        "name": "public_identifier_2"
+      },
+      {
+        "name": "public_identifier_3"
+      },
+      {
+        "name": "public_identifier_4",
+        "children": [
+          {
+            "name":  "public_identifier_5"
+          }
+        ]
+      }
+    ]
+  }
+}

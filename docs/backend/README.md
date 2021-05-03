@@ -158,14 +158,14 @@ In [3]:
 
 - after modifying/adding any database table/schema code run:
   - `make utility-alembic-autogenerate MESSAGE="descriptive message"`
-- this will create a migration file under `src/py/database_migrations`
+- this will create a migration file under `src/backend/database_migrations`
   - make sure you look this file over and verify that alembic made the appropriate changes
 - run `make utility-alembic-upgrade-head`
   - this updates your local running database, make sure you use either `make pg-console` or `make db-console` to check that changes were applied appropriately!
 
 ## Updating python dependencies
 
-To update python dependencies, update the [`Pipfile`](../../Pipfile) and run `make update-deps`. This will update [`Pipfile.lock`](../../src/py/Pipfile.lock) and [`requirements.txt`](../../src/py/requirements.txt) (used by setup.py).
+To update python dependencies, update the [`Pipfile`](../../Pipfile) and run `make update-deps`. This will update [`Pipfile.lock`](../../src/backend/Pipfile.lock) and [`requirements.txt`](../../src/backend/requirements.txt) (used by setup.py).
 You will also need to rebuild local running docker containers by running `make local-rebuild`.
 
 If you add a third-party library (directly or indirectly) that does not support [python typing](https://docs.python.org/3/library/typing.html), then you may need to add an entry to [`mypy.ini`](../../mypy.ini) to let mypy know [not to expect type hints for that library](https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-type-hints-for-third-party-library).

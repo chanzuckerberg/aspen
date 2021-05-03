@@ -1,5 +1,5 @@
 name: Patch test
-# ensure src/py/workflows/nextstrain_run/combine-and-dedup-fastas.py.patch can be applied cleanly.
+# ensure src/backend/aspen/workflows/nextstrain_run/combine-and-dedup-fastas.py.patch can be applied cleanly.
 
 on:
   schedule:
@@ -27,6 +27,6 @@ jobs:
           git checkout FETCH_HEAD
       - name: patch
         run: |
-          cp src/py/workflows/nextstrain_run/combine-and-dedup-fastas.py.patch ncov
+          cp src/backend/aspen/workflows/nextstrain_run/combine-and-dedup-fastas.py.patch ncov
           cd ncov
           patch -p1 < combine-and-dedup-fastas.py.patch

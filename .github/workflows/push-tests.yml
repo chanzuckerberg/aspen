@@ -74,8 +74,8 @@ jobs:
       - name: Test ts build
         run: |
           echo "DOCKER_REPO=${DOCKER_REPO}" > .env.ecr
-          mkdir src/ts/build
-          chmod -R a+w src/ts/build
+          mkdir src/frontend/build
+          chmod -R a+w src/frontend/build
           make frontend-test-build
   py-lint:
     runs-on: ubuntu-20.04

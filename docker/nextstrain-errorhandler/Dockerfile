@@ -21,8 +21,8 @@ RUN git fetch --depth 1 git://github.com/chanzuckerberg/aspen $REVSPEC
 RUN git checkout FETCH_HEAD
 RUN python3.7 -m venv /aspen/.venv
 RUN /aspen/.venv/bin/pip install -U pip
-RUN /aspen/.venv/bin/pip install -e src/py/third-party/sqlalchemy-enum-tables/
-RUN /aspen/.venv/bin/pip install -e src/py/
+RUN /aspen/.venv/bin/pip install -e src/backend/third-party/sqlalchemy-enum-tables/
+RUN /aspen/.venv/bin/pip install -e src/backend/
 RUN cd /
 RUN rm -rf /tmp/aspen-tmp
 

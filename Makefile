@@ -108,7 +108,7 @@ local-status: ## Show the status of the containers in the dev environment.
 
 .PHONY: local-rebuild
 local-rebuild: .env.ecr local-ecr-login ## Rebuild local dev without re-importing data
-	docker-compose $(COMPOSE_OPTS) build frontend backend
+	docker-compose $(COMPOSE_OPTS) build frontend backend utility
 	docker-compose $(COMPOSE_OPTS) up -d
 
 .PHONY: local-sync
@@ -171,13 +171,13 @@ local-update-deps: ## Update requirements.txt to reflect pipenv file changes.
 
 
 ### ACCESSING CONTAINER MAKE COMMANDS ###################################################
-utility-%: ## Run make commands in the utility container (src/py/Makefile)
+utility-%: ## Run make commands in the utility container (src/backend/Makefile)
 	docker-compose exec utility make $(subst utility-,,$@) MESSAGE="$(MESSAGE)"
 
-backend-%: .env.ecr ## Run make commands in the backend container (src/py/Makefile)
+backend-%: .env.ecr ## Run make commands in the backend container (src/backend/Makefile)
 	docker-compose $(COMPOSE_OPTS) run --no-deps --rm backend make $(subst backend-,,$@)
 
-frontend-%: .env.ecr ## Run make commands in the backend container (src/ts/Makefile)
+frontend-%: .env.ecr ## Run make commands in the backend container (src/frontend/Makefile)
 	docker-compose $(COMPOSE_OPTS) run -e CI=true --no-deps --rm frontend make $(subst frontend-,,$@)
 
 ### DOCKER FOR WORKFLOWS ###################################################
@@ -185,7 +185,7 @@ frontend-%: .env.ecr ## Run make commands in the backend container (src/ts/Makef
 build-docker: export ASPEN_DOCKER_IMAGE_VERSION=$(shell date +%Y%m%d_%H%M)
 build-docker:
 	docker pull nextstrain/base
-	docker build -t cziaspen/batch:latest --build-arg ASPEN_DOCKER_IMAGE_VERSION=$${ASPEN_DOCKER_IMAGE_VERSION} docker/aspen-batch
+	docker build --no-cache -t cziaspen/batch:latest --build-arg ASPEN_DOCKER_IMAGE_VERSION=$${ASPEN_DOCKER_IMAGE_VERSION} docker/aspen-batch
 	docker tag cziaspen/batch:latest cziaspen/batch:$${ASPEN_DOCKER_IMAGE_VERSION}
 	@echo "Please push the tags cziaspen/batch:latest and cziaspen/batch:$${ASPEN_DOCKER_IMAGE_VERSION} when done, i.e.,"
 	@echo "  docker push cziaspen/batch:latest"

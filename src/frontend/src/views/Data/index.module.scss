@@ -1,0 +1,60 @@
+@import "src/common/styles/spacing";
+@import "src/common/styles/typography";
+@import "src/common/styles/colors";
+
+.dataRoot {
+  .navigation {
+    width: 100%;
+    margin-bottom: $space-xl;
+    border-bottom: $space-xxs solid $gray-lightest;
+
+    .menu {
+      align-items: center;
+
+      a {
+        &:first-child {
+          margin-left: 10em;
+
+          div {
+            // overwrite semantic-ui style
+            padding-left: 0 !important;
+          }
+        }
+      }
+
+      .menuItem {
+        height: 100%;
+
+        .category {
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+
+          .title {
+            @include font-header-m;
+            margin-right: $space-m;
+            color: $gray-dark;
+
+            &.active {
+              color: $black;
+              border-bottom: $space-xxs solid $primary;
+            }
+          }
+
+          .count {
+            @include font-body-xs;
+            color: $gray-dark;
+          }
+        }
+      }
+    }
+  }
+
+  .view {
+    // (thuang): 74px is the navigation height + margin
+    // This is needed to ensure the div doesn't disappear
+    // when the viewport height is too short
+    height: calc(100% - 74px);
+    margin: 0 10em;
+  }
+}

@@ -24,4 +24,4 @@ if [[ $(nvm current) != "v${NODE_VERSION}" ]]; then
 fi
 
 # Install Frontend dependencies
-npm --prefix src/ts ci
+npm --prefix src/frontend ci

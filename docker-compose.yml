@@ -13,7 +13,7 @@ services:
   frontend:
     image: "${DOCKER_REPO}aspen-frontend"
     build:
-      context: src/ts
+      context: src/frontend
       target: dev
       cache_from:
         - "${DOCKER_REPO}aspen-frontend:branch-trunk"
@@ -29,12 +29,12 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./src/ts:/usr/src/app
+      - ./src/frontend:/usr/src/app
       - /usr/src/app/node_modules  # Use node_modules built in container, not from the mounted source dir
   backend:
     image: "${DOCKER_REPO}aspen-backend"
     build:
-      context: src/py
+      context: src/backend
       target: dev
       cache_from:
         - "${DOCKER_REPO}aspen-backend:branch-trunk"
@@ -62,14 +62,14 @@ services:
       - FLASK_SECRET_KEY=DevelopmentKey
       - PYTHONPATH=.
     volumes:
-      - ./src/py:/usr/src/app
+      - ./src/backend:/usr/src/app
     entrypoint: []
     # NOTE -- Using relative paths for entrypoints/commands breaks pycharm debugging
     command: ["/usr/src/app/entrypoint.sh"]
   utility:
     image: "${DOCKER_REPO}aspen-backend"
     build:
-      context: src/py
+      context: src/backend
       target: dev
       cache_from:
         - "${DOCKER_REPO}aspen-backend:branch-trunk"
@@ -88,7 +88,7 @@ services:
       - DB=docker
       - PYTHONPATH=.
     volumes:
-      - ./src/py:/usr/src/app
+      - ./src/backend:/usr/src/app
     entrypoint: []
     command: ["./utility.sh"]
   localstack:

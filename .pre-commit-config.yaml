@@ -15,6 +15,6 @@ repos:
       name: prettier
       language: system
       types_or: [javascript,jsx,ts,tsx,markdown,html,scss,css,yaml]
-      files: ^src/ts/src
+      files: ^src/frontend/src
       entry: npx prettier --write
 
