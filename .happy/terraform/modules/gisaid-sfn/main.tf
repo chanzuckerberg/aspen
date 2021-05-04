@@ -21,17 +21,15 @@ locals {
   })))
   jobs = [
     { name = "Ingest"
-      memory = 1024
+      memory = 15000
       vcpus = 1
-      next = "transform"
     },
     { name = "Transform"
-      memory = 1024
+      memory = 15000
       vcpus = 1
-      next = "align"
     },
     { name = "Align"
-      memory = 1024
+      memory = 420000
       vcpus = 1
     }
   ]
