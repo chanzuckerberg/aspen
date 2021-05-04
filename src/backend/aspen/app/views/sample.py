@@ -42,7 +42,7 @@ def samples():
 
         user = (
             get_usergroup_query(db_session, profile["user_id"])
-            .options(joinedload(User.group, Group.can_see))
+            .options(joinedload(User.group).joinedload(Group.can_see))
             .one()
         )
 
@@ -94,7 +94,9 @@ def samples():
                     entity_alias.id.in_(sample_entity_ids),
                 )
             )
-            .options(joinedload(Accession.producing_workflow, Workflow.inputs))
+            .options(
+                joinedload(Accession.producing_workflow).joinedload(Workflow.inputs)
+            )
             .all()
         )
         entity_id_to_accession_map: MutableMapping[int, Accession] = dict()

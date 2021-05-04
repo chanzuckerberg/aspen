@@ -25,6 +25,7 @@ black = "== 20.8b1"
 flake8 = "*"
 ipython = "*"
 isort = "*"
+pytest-mock = "*"
 moto = {version = "*", extras = ["s3"]}
 mypy = "*"
 pytest = "*"

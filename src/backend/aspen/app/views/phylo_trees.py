@@ -32,7 +32,7 @@ def phylo_trees():
         profile = session["profile"]
         user = (
             get_usergroup_query(db_session, profile["user_id"])
-            .options(joinedload(User.group, Group.can_see))
+            .options(joinedload(User.group).joinedload(Group.can_see))
             .one()
         )
         # TODO: Add subquery to fetch trees for which we have can-see permissions.
