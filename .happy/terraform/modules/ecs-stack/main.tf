@@ -27,9 +27,19 @@ locals {
   security_groups       = local.secret["security_groups"]
   zone                  = local.secret["zone_id"]
   cluster               = local.secret["cluster_arn"]
+
+  # Web images
   frontend_image_repo   = local.secret["ecrs"]["frontend"]["url"]
   backend_image_repo    = local.secret["ecrs"]["backend"]["url"]
+
+  # Deprecated image
   nextstrain_image_repo = local.secret["ecrs"]["nextstrain"]["url"]
+
+  # Workflow images
+  pangolin_image_repo   = local.secret["ecrs"]["pangolin"]["url"]
+  phylotree_image_repo  = local.secret["ecrs"]["phylotree"]["url"]
+  gisaid_image_repo     = local.secret["ecrs"]["gisaid"]["url"]
+
   batch_role_arn        = local.secret["batch_queues"]["aspen"]["role_arn"]
   ec2_queue_arn         = local.secret["batch_envs"]["aspen"]["envs"]["EC2"]["queue_arn"]
   spot_queue_arn        = local.secret["batch_envs"]["aspen"]["envs"]["SPOT"]["queue_arn"]
@@ -167,7 +177,7 @@ module gisaid_batch {
   source                = "../batch"
   app_name              = "nextstrain"
   stack_resource_prefix = local.stack_resource_prefix
-  image                 = "${local.nextstrain_image_repo}:${local.image_tag}"
+  image                 = "${local.gisaid_image_repo}:${local.image_tag}"
   batch_role_arn        = local.batch_role_arn
   custom_stack_name     = local.custom_stack_name
   remote_dev_prefix     = local.remote_dev_prefix
