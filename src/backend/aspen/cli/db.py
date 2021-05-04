@@ -191,8 +191,6 @@ def import_covidhub_users(
 @click.option("--covidhub-aws-profile", type=str, required=True)
 @click.option("--covidhub-db-secret", default="cliahub/cliahub_test_db")
 @click.option("--rr-project-id", type=str, required=True)
-@click.option("--s3-src-prefix", type=str, required=True)
-@click.option("--s3-dst-prefix", type=str, required=True)
 @click.option("--aspen-group-id", type=int, required=True)
 @click.pass_context
 def import_covidhub_project(
@@ -200,8 +198,6 @@ def import_covidhub_project(
     covidhub_aws_profile,
     covidhub_db_secret,
     rr_project_id,
-    s3_src_prefix,
-    s3_dst_prefix,
     aspen_group_id,
 ):
     engine = ctx.obj["ENGINE"]
@@ -211,6 +207,28 @@ def import_covidhub_project(
         covidhub_aws_profile,
         covidhub_db_secret,
         rr_project_id,
+        aspen_group_id,
+    )
+
+
+@db.command("import-covidhub-trees")
+@click.option("--covidhub-aws-profile", type=str, required=True)
+@click.option("--aspen-group-id", type=int, required=True)
+@click.option("--s3-src-prefix", type=str, required=True)
+@click.option("--s3-dst-prefix", type=str, required=True)
+@click.pass_context
+def import_covidhub_trees(
+    ctx,
+    covidhub_aws_profile,
+    aspen_group_id,
+    s3_src_prefix,
+    s3_dst_prefix,
+):
+    engine = ctx.obj["ENGINE"]
+
+    covidhub_import.import_trees(
+        engine,
+        covidhub_aws_profile,
         aspen_group_id,
         s3_src_prefix,
         s3_dst_prefix,

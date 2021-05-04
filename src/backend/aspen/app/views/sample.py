@@ -60,16 +60,16 @@ def samples():
         # load the samples.
         samples: Sequence[Sample] = (
             db_session.query(Sample)
-            .options(
-                joinedload(Sample.uploaded_pathogen_genome),
-                joinedload(Sample.sequencing_reads_collection),
-            )
             .filter(
                 or_(
                     Sample.submitting_group_id == user.group_id,
                     Sample.submitting_group_id.in_(cansee_groups_metadata),
                     user.system_admin,
                 )
+            )
+            .options(
+                joinedload(Sample.uploaded_pathogen_genome),
+                joinedload(Sample.sequencing_reads_collection),
             )
             .all()
         )
@@ -87,7 +87,7 @@ def samples():
             .distinct(Accession.entity_id)
             .join(Accession.producing_workflow)
             .join(entity_alias, Workflow.inputs)
-            .order_by(Accession.entity_id.desc())
+            .order_by(Accession.entity_id, Workflow.end_datetime.desc())
             .filter(
                 and_(
                     Workflow.workflow_type == WorkflowType.PUBLIC_REPOSITORY_SUBMISSION,

@@ -1,9 +1,17 @@
+import datetime
 import json
 from typing import Any, Optional, Sequence, Tuple
 
 from aspen.app.views import api_utils
 from aspen.app.views.sample import SAMPLE_KEY
-from aspen.database.models import CanSee, DataType, Sample, SequencingReadsCollection
+from aspen.database.models import (
+    CanSee,
+    DataType,
+    PublicRepositoryType,
+    Sample,
+    SequencingReadsCollection,
+)
+from aspen.test_infra.models.accession_workflow import AccessionWorkflowDirective
 from aspen.test_infra.models.sample import sample_factory
 from aspen.test_infra.models.sequences import sequencing_read_factory
 from aspen.test_infra.models.usergroup import group_factory, user_factory
@@ -201,3 +209,99 @@ def test_samples_view_cansee_all(
             "gisaid": sequencing_read_collection.accessions()[0].public_identifier,
         }
     ]
+
+
+def test_samples_failed_accession(
+    session,
+    app,
+    client,
+):
+    """Add a sample with one successful and one failed accession attempt.  The samples
+    view should return the successful accession ID."""
+    group = group_factory()
+    user = user_factory(group)
+    sample = sample_factory(group)
+    sequencing_read = sequencing_read_factory(
+        sample,
+        accessions=(
+            # failed accession.
+            AccessionWorkflowDirective(
+                datetime.datetime.now() - datetime.timedelta(days=1, hours=2),
+                None,
+                None,
+                None,
+            ),
+            AccessionWorkflowDirective(
+                datetime.datetime.now() - datetime.timedelta(days=1, hours=1),
+                datetime.datetime.now() - datetime.timedelta(days=1),
+                PublicRepositoryType.GISAID,
+                "public_identifier_succeeded",
+            ),
+        ),
+    )
+    session.add(group)
+    session.commit()
+    with client.session_transaction() as sess:
+        sess["profile"] = {"name": user.name, "user_id": user.auth0_user_id}
+    res = client.get("/api/samples")
+    expected = {
+        SAMPLE_KEY: [
+            {
+                "collection_date": api_utils.format_date(sample.collection_date),
+                "collection_location": sample.location,
+                "private_identifier": sample.private_identifier,
+                "public_identifier": sample.public_identifier,
+                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
+                "gisaid": "public_identifier_succeeded",
+            }
+        ]
+    }
+    assert expected == json.loads(res.get_data(as_text=True))
+
+
+def test_samples_multiple_accession(
+    session,
+    app,
+    client,
+):
+    """Add a sample with two successful accession attempts.  The samples view should
+    return the latest accession ID."""
+    group = group_factory()
+    user = user_factory(group)
+    sample = sample_factory(group)
+    sequencing_read = sequencing_read_factory(
+        sample,
+        accessions=(
+            # failed accession.
+            AccessionWorkflowDirective(
+                datetime.datetime.now() - datetime.timedelta(days=1, hours=2),
+                datetime.datetime.now() - datetime.timedelta(days=1, hours=1),
+                PublicRepositoryType.GISAID,
+                "public_identifier_earlier",
+            ),
+            AccessionWorkflowDirective(
+                datetime.datetime.now() - datetime.timedelta(days=1, hours=1),
+                datetime.datetime.now() - datetime.timedelta(days=1),
+                PublicRepositoryType.GISAID,
+                "public_identifier_later",
+            ),
+        ),
+    )
+    session.add(group)
+    session.commit()
+    with client.session_transaction() as sess:
+        sess["profile"] = {"name": user.name, "user_id": user.auth0_user_id}
+    res = client.get("/api/samples")
+    expected = {
+        SAMPLE_KEY: [
+            {
+                "collection_date": api_utils.format_date(sample.collection_date),
+                "collection_location": sample.location,
+                "private_identifier": sample.private_identifier,
+                "public_identifier": sample.public_identifier,
+                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
+                "gisaid": "public_identifier_later",
+            }
+        ]
+    }
+    assert expected == json.loads(res.get_data(as_text=True))

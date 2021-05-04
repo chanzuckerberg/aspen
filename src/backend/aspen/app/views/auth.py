@@ -1,7 +1,7 @@
 import os
 from urllib.parse import urlencode
 
-from flask import redirect, session, url_for
+from flask import redirect, session
 
 from aspen.app.app import application, auth0
 
@@ -35,7 +35,7 @@ def logout():
     session.clear()
     # Redirect user to logout endpoint
     params = {
-        "returnTo": url_for("serve", _external=True, _scheme="https"),
+        "returnTo": os.getenv("FRONTEND_URL"),
         "client_id": application.aspen_config.AUTH0_CLIENT_ID,
     }
     return redirect(auth0.api_base_url + "/v2/logout?" + urlencode(params))

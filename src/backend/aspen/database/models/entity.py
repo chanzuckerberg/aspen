@@ -136,8 +136,8 @@ class Entity(idbase):  # type: ignore
         self,
         repository_type: PublicRepositoryType,
         public_identifier: str,
-        workflow_start_datetime: Optional[datetime.datetime] = None,
-        workflow_end_datetime: Optional[datetime.datetime] = None,
+        workflow_start_datetime: datetime.datetime,
+        workflow_end_datetime: datetime.datetime,
     ):
         """Adds an accession to this object."""
         from .accessions import Accession
