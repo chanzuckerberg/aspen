@@ -1,0 +1,31 @@
+# Separate base image so that we can use it to update the Pipfile.lock and requirements.txt file
+FROM python:3.9.1-slim AS base
+ENV FLASK_APP=aspen.main
+EXPOSE 3000
+RUN pip install --no-cache-dir pipenv
+
+RUN apt-get update
+RUN apt-get install -y git
+
+WORKDIR /covidhub
+
+ARG GIT_TOKEN=$GIT_TOKEN
+
+RUN git init
+# TODO: THIS IS A TOKEN DO NOT COMMIT THIS!!!!!  REALITY: retrieve the secret elsewhere.
+RUN git fetch --depth 1 https://${GIT_TOKEN}@github.com/czbiohub/covidhub.git unpinned-dependencies
+RUN git checkout FETCH_HEAD
+
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt .
+COPY Pipfile* ./
+COPY third-party ./third-party/
+ENV FLASK_ENV=development
+ENV PIPENV_PYTHON=/usr/src/app/
+COPY setup.py .
+RUN pipenv install --dev --system --verbose && pipenv --clear
+RUN pip install -e /covidhub/code/
+RUN apt-get update && apt-get install make
+COPY . .

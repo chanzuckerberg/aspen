@@ -40,6 +40,7 @@ locals {
   pangolin_image_repo   = local.secret["ecrs"]["pangolin"]["url"]
   nextstrain_image_repo = local.secret["ecrs"]["nextstrain"]["url"]
   gisaid_image_repo     = local.secret["ecrs"]["gisaid"]["url"]
+  covidhub_import_image_repo  = local.secret["ecrs"]["covidhub-import"]["url"]
 
   # This is the wdl executor image, doesn't change on update.
   swipe_image_repo     = local.secret["ecrs"]["swipe"]["url"]
@@ -180,6 +181,20 @@ module pangolin_sfn_config {
   image    = "${local.pangolin_image_repo}:${local.image_tag}"
   memory   = 420000
   wdl_path = "workflows/pangolin.wdl"
+  custom_stack_name     = local.custom_stack_name
+  deployment_stage      = local.deployment_stage
+  remote_dev_prefix     = local.remote_dev_prefix
+  stack_resource_prefix = local.stack_resource_prefix
+  swipe_comms_bucket    = local.swipe_comms_bucket
+  swipe_wdl_bucket      = local.swipe_wdl_bucket
+}
+
+module covidhub_import_sfn_config {
+  source   = "../sfn_config"
+  app_name = "covidhub-import-sfn"
+  image    = "${local.covidhub_import_image_repo}:may-7"
+  memory   = 32000
+  wdl_path = "workflows/covidhub-import.wdl"
   custom_stack_name     = local.custom_stack_name
   deployment_stage      = local.deployment_stage
   remote_dev_prefix     = local.remote_dev_prefix
