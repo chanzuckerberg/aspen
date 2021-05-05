@@ -28,17 +28,20 @@ locals {
   zone                  = local.secret["zone_id"]
   cluster               = local.secret["cluster_arn"]
 
+  swipe_comms_bucket    = local.secret["s3_buckets"]["aspen_swipe_comms"]["name"]
+  swipe_wdl_bucket      = local.secret["s3_buckets"]["aspen_swipe_wdl"]["name"]
+
   # Web images
   frontend_image_repo   = local.secret["ecrs"]["frontend"]["url"]
   backend_image_repo    = local.secret["ecrs"]["backend"]["url"]
-
-  # Deprecated image
-  nextstrain_image_repo = local.secret["ecrs"]["nextstrain"]["url"]
 
   # Workflow images
   pangolin_image_repo   = local.secret["ecrs"]["pangolin"]["url"]
   phylotree_image_repo  = local.secret["ecrs"]["phylotree"]["url"]
   gisaid_image_repo     = local.secret["ecrs"]["gisaid"]["url"]
+
+  # This is the wdl executor image, doesn't change on update.
+  swipe_image_repo     = local.secret["ecrs"]["swipe"]["url"]
 
   batch_role_arn        = local.secret["batch_queues"]["aspen"]["role_arn"]
   ec2_queue_arn         = local.secret["batch_envs"]["aspen"]["envs"]["EC2"]["queue_arn"]
@@ -100,7 +103,7 @@ module frontend_service {
   service_port          = 3000
   cmd                   = local.frontend_cmd
   deployment_stage      = local.deployment_stage
-  step_function_arn     = module.gisaid_sfn.step_function_arn
+  step_function_arn     = module.swipe_sfn.step_function_arn
   host_match            = try(join(".", [module.frontend_dns[0].dns_prefix, local.external_dns]), "")
   priority              = local.priority
   api_url               = local.backend_url
@@ -126,7 +129,7 @@ module backend_service {
   service_port          = 3000
   cmd                   = local.backend_cmd
   deployment_stage      = local.deployment_stage
-  step_function_arn     = module.gisaid_sfn.step_function_arn
+  step_function_arn     = module.swipe_sfn.step_function_arn
   host_match            = try(join(".", [module.backend_dns[0].dns_prefix, local.external_dns]), "")
   priority              = local.priority
   api_url               = local.backend_url
@@ -137,16 +140,30 @@ module backend_service {
   wait_for_steady_state = local.wait_for_steady_state
 }
 
-module gisaid_sfn {
-  source                 = "../gisaid-sfn"
-  app_name               = "gisaid"
+module swipe_sfn {
+  source                 = "../swipe-sfn"
+  app_name               = "swipe-sfn"
   stack_resource_prefix  = local.stack_resource_prefix
-  job_definition_name    = module.gisaid_batch.batch_job_definition
+  job_definition_name    = module.swipe_batch.batch_job_definition
   ec2_queue_arn          = local.ec2_queue_arn
-  spot_queue_arn          = local.spot_queue_arn
+  spot_queue_arn         = local.spot_queue_arn
   role_arn               = local.sfn_role_arn
   custom_stack_name      = local.custom_stack_name
   deployment_stage       = local.deployment_stage
+}
+
+# Write information on how to invoke the gisaid sfn to SSM.
+module gisaid_sfn_config {
+  source   = "../sfn_config"
+  app_name = "gisaid-sfn"
+  image    = "${local.gisaid_image_repo}:${local.image_tag}"
+  memory   = 420000
+  wdl_path = "workflows/gisaid.wdl"
+  custom_stack_name     = local.custom_stack_name
+  deployment_stage      = local.deployment_stage
+  stack_resource_prefix = local.stack_resource_prefix
+  swipe_comms_bucket = local.swipe_comms_bucket
+  swipe_wdl_bucket = local.swipe_wdl_bucket
 }
 
 module migrate_db {
@@ -173,11 +190,11 @@ module delete_db {
   deployment_stage      = local.deployment_stage
 }
 
-module gisaid_batch {
+module swipe_batch {
   source                = "../batch"
-  app_name              = "nextstrain"
+  app_name              = "swipe"
   stack_resource_prefix = local.stack_resource_prefix
-  image                 = "${local.gisaid_image_repo}:${local.image_tag}"
+  image                 = "${local.swipe_image_repo}:latest" # TODO hardcoded
   batch_role_arn        = local.batch_role_arn
   custom_stack_name     = local.custom_stack_name
   remote_dev_prefix     = local.remote_dev_prefix
