@@ -26,16 +26,22 @@ RUN apt-get -qq update && apt-get -qq -y install \
     python3-wheel \
     python3-yaml \
     python3-dateutil \
-    python3-venv \
+    python3-biopython \
+    python3-regex \
+    python3-dev \
+    virtualenv \
     awscli \
     xz-utils \
+    zstd \
+    snakemake \
+    mafft \
     gcc \
     && locale-gen en_US.UTF-8
 
-RUN git clone --depth 1 git://github.com/chanzuckerberg/aspen
-RUN python3 -m venv /aspen/.venv
-RUN bash -c "source /aspen/.venv/bin/activate; pip3 install /aspen/src/backend /aspen/src/backend/third-party/sqlalchemy-enum-tables"
+RUN git clone --depth 1 git://github.com/chanzuckerberg/aspen && \
+    pip3 install /aspen/src/backend /aspen/src/backend/third-party/sqlalchemy-enum-tables
 
-RUN git clone --depth 1 git://github.com/nextstrain/ncov-ingest
-RUN python3 -m venv /ncov-ingest/.venv
-RUN bash -c "source /ncov-ingest/.venv/bin/activate; pip install -U pip pipenv; pipenv install"
+RUN git clone --depth 1 git://github.com/nextstrain/ncov-ingest && \
+    pip3 install nextstrain-cli csv-diff s3fs[boto3] aiobotocore[awscli,boto3] envdir fsspec pandas
+
+RUN git clone --depth 1 git://github.com/nextstrain/ncov
