@@ -6,7 +6,7 @@ data aws_region current {}
 locals {
   container_properties = yamldecode(templatefile("${path.module}/container_properties.yml", {
     app_name           = var.app_name,
-    batch_docker_image = var.image
+    batch_docker_image = "473004499091.dkr.ecr.us-west-2.amazonaws.com/aspen-swipe:branch-main"
     aws_region         = data.aws_region.current.name,
     batch_job_role_arn = var.batch_role_arn
     deployment_stage   = var.deployment_stage
