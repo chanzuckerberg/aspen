@@ -1,6 +1,6 @@
 import json
 
-from aspen.test_infra.models.phylo_tree import phylotree_factory
+from aspen.test_infra.models.phylo_tree import phylorun_factory, phylotree_factory
 from aspen.test_infra.models.sample import sample_factory
 from aspen.test_infra.models.usergroup import group_factory, user_factory
 
@@ -27,7 +27,7 @@ def test_auspice_redirect_view(session, app, client, mock_s3_resource, test_data
     session.add(sample_2)
     session.commit()
 
-    phylo_tree = phylotree_factory([sample_1, sample_2])
+    phylo_tree = phylotree_factory(phylorun_factory(group), [sample_1, sample_2])
     session.add(phylo_tree)
     session.commit()
 

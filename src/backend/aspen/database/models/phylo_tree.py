@@ -50,6 +50,9 @@ class PhyloTree(Entity):
         uselist=True,
     )
 
+    def __str__(self) -> str:
+        return f"PhyloTree <id={self.entity_id}>"
+
 
 class PhyloRun(Workflow):
     __tablename__ = "phylo_runs"

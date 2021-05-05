@@ -60,3 +60,14 @@ resource "aws_security_group_rule" "remote-db-access-phoenix" {
   protocol          = "tcp"
   cidr_blocks       = ["24.6.0.151/32"]
 }
+
+resource "aws_security_group_rule" "remote-db-access-shannon" {
+  count             = var.DEPLOYMENT_ENVIRONMENT == "prod" ? 0 : 1
+  security_group_id = aws_security_group.db-security-group.id
+  type              = "ingress"
+  description       = "shannon"
+  from_port         = 5432
+  to_port           = 5432
+  protocol          = "tcp"
+  cidr_blocks       = ["73.162.199.26/32"]
+}

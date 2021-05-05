@@ -5,6 +5,7 @@ export DOCKER_BUILDKIT:=1
 export COMPOSE_DOCKER_CLI_BUILD:=1
 export COMPOSE_OPTS:=--env .env.ecr
 export AWS_DEV_PROFILE=genepi-dev
+export AWS_PROD_PROFILE=genepi-prod
 export BACKEND_APP_ROOT=/usr/src/app
 
 ### DATABASE VARIABLES #################################################
@@ -30,18 +31,22 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 ### Connecting to remote dbs #########################################
 remote-pgconsole: # Get a psql console on a remote db (from OSX only!)
 	export ENV=$${ENV:=rdev}; \
-	export config=$$(aws --profile $(AWS_DEV_PROFILE) secretsmanager get-secret-value --secret-id $${ENV}/aspen-config | jq -r .SecretString ); \
-	export DB_URI=$$(jq -r '"postgresql://\(.DB.admin_username):\(.DB.admin_password)@127.0.0.1:5556/$(STACK)"' <<< $$config); \
+	export AWS_PROFILE=$(shell [ $(ENV) = prod ] && echo $(AWS_PROD_PROFILE) || echo $(AWS_DEV_PROFILE)); \
+	export config=$$(aws secretsmanager get-secret-value --secret-id $${ENV}/aspen-config | jq -r .SecretString ); \
+	export DB_URI=$$(jq -r '"postgresql://\(.DB.admin_username):\(.DB.admin_password)@127.0.0.1:5556/$(DB)"' <<< $$config); \
+	echo Connecting to $$(jq -r .DB.address <<< $$config)/$(DB) via $$(jq -r .bastion_host <<< $$config); \
 	ssh -f -o ExitOnForwardFailure=yes -L 5556:$$(jq -r .DB.address <<< $$config):5432 $$(jq -r .bastion_host <<< $$config) sleep 10; \
 	psql $${DB_URI}
 
 remote-dbconsole: .env.ecr # Get a python console on a remote db (from OSX only!)
 	export ENV=$${ENV:=rdev}; \
-	export config=$$(aws --profile $(AWS_DEV_PROFILE) secretsmanager get-secret-value --secret-id $${ENV}/aspen-config | jq -r .SecretString ); \
+	export AWS_PROFILE=$(shell [ $(ENV) = prod ] && echo $(AWS_PROD_PROFILE) || echo $(AWS_DEV_PROFILE)); \
+	export config=$$(aws secretsmanager get-secret-value --secret-id $${ENV}/aspen-config | jq -r .SecretString ); \
 	export OSX_IP=$$(ipconfig getifaddr en0 || ipconfig getifaddr en1); \
-	export DB_URI=$$(jq -r '"postgresql://\(.DB.admin_username):\(.DB.admin_password)@'$${OSX_IP}':5555/$(STACK)"' <<< $$config); \
-	ssh -f -o ExitOnForwardFailure=yes -L $${OSX_IP}:5555:$$(jq -r .DB.address <<< $$config):5432 $$(jq -r .bastion_host <<< $$config) sleep 10; \
-	docker-compose $(COMPOSE_OPTS) run -e DB_URI backend aspen-cli db --remote interact --connect
+	export DB_URI=$$(jq -r '"postgresql://\(.DB.admin_username):\(.DB.admin_password)@'$${OSX_IP}':5555/$(DB)"' <<< $$config); \
+	echo Connecting to $$(jq -r .DB.address <<< $$config)/$(DB) via $$(jq -r .bastion_host <<< $$config); \
+	ssh -f -o ExitOnForwardFailure=yes -L $${OSX_IP}:5555:$$(jq -r .DB.address <<< $$config):5432 $$(jq -r .bastion_host <<< $$config) sleep 20; \
+	docker-compose $(COMPOSE_OPTS) run -e DB_URI backend sh -c 'pip install . && aspen-cli db --remote interact --connect'
 
 ### DOCKER LOCAL DEV #########################################
 oauth/pkcs12/certificate.pfx:

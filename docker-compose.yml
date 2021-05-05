@@ -14,7 +14,6 @@ services:
     image: "${DOCKER_REPO}aspen-frontend"
     build:
       context: src/frontend
-      target: dev
       cache_from:
         - "${DOCKER_REPO}aspen-frontend:branch-trunk"
       args:
@@ -35,7 +34,6 @@ services:
     image: "${DOCKER_REPO}aspen-backend"
     build:
       context: src/backend
-      target: dev
       cache_from:
         - "${DOCKER_REPO}aspen-backend:branch-trunk"
       args:
@@ -70,7 +68,6 @@ services:
     image: "${DOCKER_REPO}aspen-backend"
     build:
       context: src/backend
-      target: dev
       cache_from:
         - "${DOCKER_REPO}aspen-backend:branch-trunk"
       args:

@@ -5,7 +5,7 @@ check-style:
 lint:
 	npm --prefix . run lint
 
-### TESTING #############################################
+### TESTING #################################################
 test: # run ts test
 	npm --prefix . test
 

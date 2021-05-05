@@ -2,7 +2,7 @@ import json
 
 from aspen.app.views.phylo_trees import _process_phylo_tree
 from aspen.database.models import CanSee, DataType
-from aspen.test_infra.models.phylo_tree import phylotree_factory
+from aspen.test_infra.models.phylo_tree import phylorun_factory, phylotree_factory
 from aspen.test_infra.models.sample import sample_factory
 from aspen.test_infra.models.usergroup import group_factory, user_factory
 
@@ -57,7 +57,8 @@ def test_phylo_tree_rename(session, mock_s3_resource, test_data_dir):
     )
 
     phylo_tree = phylotree_factory(
-        [local_sample, can_see_sample, wrong_can_see_sample, no_can_see_sample]
+        phylorun_factory(viewer_group),
+        [local_sample, can_see_sample, wrong_can_see_sample, no_can_see_sample],
     )
 
     # We need to create the bucket since this is all in Moto's 'virtual' AWS account
