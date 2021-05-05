@@ -161,6 +161,7 @@ module gisaid_sfn_config {
   wdl_path = "workflows/gisaid.wdl"
   custom_stack_name     = local.custom_stack_name
   deployment_stage      = local.deployment_stage
+  remote_dev_prefix     = local.remote_dev_prefix
   stack_resource_prefix = local.stack_resource_prefix
   swipe_comms_bucket = local.swipe_comms_bucket
   swipe_wdl_bucket = local.swipe_wdl_bucket
