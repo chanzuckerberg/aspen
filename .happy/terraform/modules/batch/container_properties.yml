@@ -76,6 +76,8 @@ environment:
     value: "${remote_dev_prefix}"
   - name: "FRONTEND_URL"
     value: "${frontend_url}"
+  - name: "AUTH0_CONFIG_SECRET_NAME",
+    value: "${deployment_stage}/aspen-config"
   - name: "WDL_INPUT_URI"
     value: "Set this variable to the S3 URI of the WDL input JSON"
   - name: "WDL_WORKFLOW_URI"
