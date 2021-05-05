@@ -116,6 +116,11 @@ local-rebuild: .env.ecr local-ecr-login ## Rebuild local dev without re-importin
 	docker-compose $(COMPOSE_OPTS) build frontend backend utility
 	docker-compose $(COMPOSE_OPTS) up -d
 
+.PHONY: local-rebuild-batch
+local-rebuild-batch: .env.ecr local-ecr-login ## Rebuild batch containers
+	docker-compose $(COMPOSE_OPTS) build gisaid pangolin
+	docker-compose $(COMPOSE_OPTS) up -d
+
 .PHONY: local-sync
 local-sync: local-rebuild local-init ## Re-sync the local-environment state after modifying library deps or docker configs
 

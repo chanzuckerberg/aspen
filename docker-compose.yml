@@ -126,15 +126,26 @@ services:
     volumes:
       - ./oauth/pkcs12:/tmp/pkcs12:ro
       - ./oauth:/tmp/config:ro
-  nextstrain:
-    image: "${DOCKER_REPO}aspen-nextstrain"
+  gisaid:
+    image: "${DOCKER_REPO}aspen-gisaid"
     build:
-      context: docker/aspen-batch
+      context: workflows/
       cache_from:
-        - "${DOCKER_REPO}aspen-nextstrain:branch-trunk"
+        - "${DOCKER_REPO}aspen-gisaid:branch-trunk"
       args:
         - BUILDKIT_INLINE_CACHE=1
-    command: ["sleep", "infinity"]
+    command: ["true"]
+    restart: "no"
+  pangolin:
+    image: "${DOCKER_REPO}aspen-pangolin"
+    build:
+      context: workflows/pangolin
+      cache_from:
+        - "${DOCKER_REPO}aspen-pangolin:branch-trunk"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    command: ["true"]
+    restart: "no"
 volumes:
   database:
   localstack:
