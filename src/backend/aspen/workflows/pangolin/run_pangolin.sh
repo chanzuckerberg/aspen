@@ -1,25 +1,26 @@
+#!/bin/bash
+
+# TODO: fix pipefail flags to be informative
 #set -Eex pipefail
 
-# install miniconda
+# activate miniconda
 eval "$($HOME/miniconda/bin/conda shell.bash hook)"
 conda init
 
 # install pangolin
-#mkdir pangolin
-#cd pangolin
-#git init
-#git fetch --depth 1 git://github.com/cov-lineages/pangolin.git
-#git checkout FETCH_HEAD
-#conda env create -f environment.yml
+mkdir /pangolin
+cd /pangolin
+git init
+git fetch --depth 1 git://github.com/cov-lineages/pangolin.git
+git checkout FETCH_HEAD
+conda env create -f environment.yml
 conda activate pangolin
-#python setup.py install
+python setup.py install
 
 # check pangolin installation worked:
-#pangolin -pv
+pangolin -pv
 
 # process all trailing args to include --sample-public-identifiers flag
-echo "${@}"
-
 args=""
 for sample_id in "${@}"
 do
@@ -28,6 +29,7 @@ done
 
 sequences_output="sequences.fasta"
 
+cd /usr/src/app/aspen/backend/workflows
 # call export script to export renamed sequences
 /usr/local/bin/python3.9 export.py \
   $args \
