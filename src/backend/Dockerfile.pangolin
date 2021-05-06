@@ -1,4 +1,3 @@
-# Separate base image so that we can use it to update the Pipfile.lock and requirements.txt file
 FROM python:3.9.1-slim AS base
 ENV FLASK_APP=aspen.main
 EXPOSE 3000
@@ -13,6 +12,7 @@ COPY setup.py .
 RUN pipenv install --dev --system --verbose && pipenv --clear
 RUN apt-get update && apt-get install make
 RUN apt-get install -y wget
+RUN apt-get install -y git
 # install miniconda
 RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 RUN chmod +x Miniconda3-latest-Linux-x86_64.sh
