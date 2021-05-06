@@ -30,7 +30,7 @@ locals {
 
   swipe_comms_bucket    = local.secret["s3_buckets"]["aspen_swipe_comms"]["name"]
   swipe_wdl_bucket      = local.secret["s3_buckets"]["aspen_swipe_wdl"]["name"]
-  aspen_data_bucket     = local.secret["s3_buckets"]["aspen"]["name"]
+  aspen_data_bucket     = local.secret["s3_buckets"]["aspen_data"]["name"]
 
   # Web images
   frontend_image_repo   = local.secret["ecrs"]["frontend"]["url"]

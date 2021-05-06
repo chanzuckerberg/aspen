@@ -13,6 +13,7 @@ resource "aws_ssm_parameter" "run_config" {
     Input = {
       Run = {
          docker_image_id = var.image
+         aws_region = "us-west-2" # FIXME hardcoded.
          db_data_bucket = var.data_bucket
          gisaid_ndjson_staging_bucket = var.data_bucket
          gisaid_ndjson_staging_key = "raw_gisaid_dump/cached_gisaid.zst"
