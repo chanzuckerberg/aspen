@@ -73,14 +73,14 @@ resource "aws_batch_compute_environment" "aspen-batch-compute-environment" {
     instance_role = aws_iam_instance_profile.batch-ecs-instance-role.arn
     allocation_strategy = "BEST_FIT"
     # TODO: create common ec2 key
-    ec2_key_pair = "phoenix"
+    ec2_key_pair = "ttung"
 
     instance_type = [
       "r5",
     ]
 
     max_vcpus = 128
-    min_vcpus = 0
+    min_vcpus = 1
 
     security_group_ids = [
       aws_security_group.aspen-batch-security-group.id,
