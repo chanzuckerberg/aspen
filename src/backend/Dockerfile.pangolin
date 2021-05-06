@@ -1,0 +1,23 @@
+# Separate base image so that we can use it to update the Pipfile.lock and requirements.txt file
+FROM python:3.9.1-slim AS base
+ENV FLASK_APP=aspen.main
+EXPOSE 3000
+RUN pip install --no-cache-dir pipenv
+WORKDIR /usr/src/app
+COPY requirements.txt .
+COPY Pipfile* ./
+COPY third-party ./third-party/
+ENV FLASK_ENV=development
+ENV PIPENV_PYTHON=/usr/src/app/
+COPY setup.py .
+RUN pipenv install --dev --system --verbose && pipenv --clear
+RUN apt-get update && apt-get install make
+RUN apt-get install -y wget
+# install miniconda
+RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+RUN chmod +x Miniconda3-latest-Linux-x86_64.sh
+RUN ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
+RUN eval "$($HOME/miniconda/bin/conda shell.bash hook)" && conda init
+
+COPY . .
+ENTRYPOINT ["./entrypoint.sh"]
