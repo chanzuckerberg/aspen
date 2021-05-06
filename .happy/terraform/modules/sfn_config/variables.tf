@@ -38,6 +38,11 @@ variable swipe_comms_bucket {
   description = "Bucket for swipe comms storage"
 }
 
+variable data_bucket {
+  type        = string
+  description = "Bucket for job data"
+}
+
 variable custom_stack_name {
   type        = string
   description = "Please provide the stack name"

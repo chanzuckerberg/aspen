@@ -12,7 +12,10 @@ resource "aws_ssm_parameter" "run_config" {
   value = jsonencode({
     Input = {
       Run = {
-        docker_image_id = var.image
+         docker_image_id = var.image
+         db_data_bucket = var.data_bucket
+         gisaid_ndjson_staging_bucket = var.data_bucket
+         gisaid_ndjson_staging_key = "raw_gisaid_dump/cached_gisaid.zst"
       }
     }
     OutputPrefix = "s3://${var.swipe_comms_bucket}/swipe${var.remote_dev_prefix}/${var.app_name}/results",

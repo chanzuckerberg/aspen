@@ -30,6 +30,7 @@ locals {
 
   swipe_comms_bucket    = local.secret["s3_buckets"]["aspen_swipe_comms"]["name"]
   swipe_wdl_bucket      = local.secret["s3_buckets"]["aspen_swipe_wdl"]["name"]
+  aspen_data_bucket     = local.secret["s3_buckets"]["aspen"]["name"]
 
   # Web images
   frontend_image_repo   = local.secret["ecrs"]["frontend"]["url"]
@@ -164,8 +165,9 @@ module gisaid_sfn_config {
   deployment_stage      = local.deployment_stage
   remote_dev_prefix     = local.remote_dev_prefix
   stack_resource_prefix = local.stack_resource_prefix
-  swipe_comms_bucket = local.swipe_comms_bucket
-  swipe_wdl_bucket = local.swipe_wdl_bucket
+  swipe_comms_bucket    = local.swipe_comms_bucket
+  swipe_wdl_bucket      = local.swipe_wdl_bucket
+  data_bucket           = local.aspen_data_bucket
 }
 
 module migrate_db {
