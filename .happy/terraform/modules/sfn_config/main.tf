@@ -10,8 +10,14 @@ resource "aws_ssm_parameter" "run_config" {
   name = "${var.stack_resource_prefix}-${var.deployment_stage}-${var.custom_stack_name}-${var.app_name}"
   type  = "String"
   value = jsonencode({
-    image_id = var.image
-    wdl_path = "s3://${aws_s3_bucket_object.wdl.bucket}${aws_s3_bucket_object.wdl.key}"
-    memory = var.memory
+    Input = {
+      Run = {
+        docker_image_id = var.image
+      }
+    }
+    OutputPrefix = "s3://${var.swipe_comms_bucket}/results",
+    RunSPOTMemory = var.memory
+    RunEC2Memory = var.memory
+    RUN_WDL_URI = "s3://${aws_s3_bucket_object.wdl.bucket}${aws_s3_bucket_object.wdl.key}"
   })
 }
