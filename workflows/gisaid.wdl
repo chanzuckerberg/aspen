@@ -4,9 +4,9 @@ workflow LoadGISAID {
     input {
         String docker_image_id = "aspen-gisaid"
         String aws_region = "us-west-2"
-        String db_data_bucket = "aspen-db-data-dev"
+        String db_data_bucket = "aspen-data-rdev"
         String gisaid_ndjson_export_url = "https://www.epicov.org/epi3/3p/exp3/export/export.json.bz2"
-        String gisaid_ndjson_staging_bucket = "aspen-data-dev"
+        String gisaid_ndjson_staging_bucket = "aspen-data-rdev"
         String gisaid_ndjson_staging_key = "raw_gisaid_dump/test.zst"
     }
 
