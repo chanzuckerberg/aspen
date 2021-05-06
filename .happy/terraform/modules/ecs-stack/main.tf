@@ -144,6 +144,7 @@ module swipe_sfn {
   source                 = "../swipe-sfn"
   app_name               = "swipe-sfn"
   stack_resource_prefix  = local.stack_resource_prefix
+  remote_dev_prefix      = local.remote_dev_prefix
   job_definition_name    = module.swipe_batch.batch_job_definition
   ec2_queue_arn          = local.ec2_queue_arn
   spot_queue_arn         = local.spot_queue_arn

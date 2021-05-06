@@ -15,7 +15,7 @@ locals {
   sfn_def = yamldecode(templatefile("${path.module}/sfn.yml", merge(local.lambdas, {
     deployment_environment = local.env
     deployment_stage = var.deployment_stage
-    remote_dev_prefix = var.stack_resource_prefix
+    remote_dev_prefix = var.remote_dev_prefix
     aws_default_region = "us-west-2"
     batch_ec2_job_queue_name = var.ec2_queue_arn
     batch_spot_job_queue_name = var.spot_queue_arn
