@@ -15,7 +15,7 @@ resource "aws_ssm_parameter" "run_config" {
         docker_image_id = var.image
       }
     }
-    OutputPrefix = "s3://${var.swipe_comms_bucket}/results",
+    OutputPrefix = "s3://${var.swipe_comms_bucket}/swipe${var.remote_dev_prefix}/${var.app_name}/results",
     RunSPOTMemory = var.memory
     RunEC2Memory = var.memory
     RUN_WDL_URI = "s3://${aws_s3_bucket_object.wdl.bucket}${aws_s3_bucket_object.wdl.key}"
