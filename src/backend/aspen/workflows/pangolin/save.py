@@ -26,7 +26,7 @@ def get_probability(conflict: float) -> float:
     "--pangolin-last-updated", type=click.DateTime(formats=["%m-%d-%Y"]), required=True
 )
 def cli(pangolin_fh: io.TextIOBase, pangolin_last_updated: datetime):
-    interface: SqlAlchemyInterface = init_db(get_db_uri(RemoteDatabaseConfig()))
+    interface: SqlAlchemyInterface = init_db(get_db_uri(RemoteData  baseConfig()))
 
     with session_scope(interface) as session:
         pango_csv: csv.DictReader = csv.DictReader(pangolin_fh)
