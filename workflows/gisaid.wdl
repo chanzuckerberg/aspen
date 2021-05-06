@@ -23,8 +23,8 @@ workflow LoadGISAID {
         input:
         docker_image_id = docker_image_id,
         aws_region = aws_region,
-        gisaid_ndjson_staging_bucket = gisaid_ndjson_staging_bucket,
-        gisaid_ndjson_staging_key = gisaid_ndjson_staging_key
+        gisaid_ndjson_staging_bucket = RefreshGISAID.result_bucket,
+        gisaid_ndjson_staging_key = RefreshGISAID.result_key
     }
 
     call TransformGISAID {
@@ -90,6 +90,8 @@ task RefreshGISAID {
     >>>
 
     output {
+        String result_bucket = "~{gisaid_ndjson_staging_bucket}"
+        String result_key = "~{gisaid_ndjson_staging_key}"
     }
 
     runtime {
@@ -99,10 +101,10 @@ task RefreshGISAID {
 
 task IngestGISAID {
     input {
-        String docker_image_id = "aspen-gisaid"
-        String aws_region = "us-west-2"
-        String gisaid_ndjson_staging_bucket = "akislyuk-aspen-experiments"
-        String gisaid_ndjson_staging_key = "gisaid.3.ndjson.xz"
+        String docker_image_id
+        String aws_region
+        String gisaid_ndjson_staging_bucket
+        String gisaid_ndjson_staging_key
     }
 
     command <<<
@@ -139,11 +141,11 @@ task IngestGISAID {
 
 task TransformGISAID {
     input {
-        String docker_image_id = "aspen-gisaid"
-        String aws_region = "us-west-2"
+        String docker_image_id
+        String aws_region
         String raw_gisaid_object_id
         File raw_gisaid_object
-        String db_data_bucket = "aspen-db-data-dev"
+        String db_data_bucket
     }
 
     command <<<
@@ -204,9 +206,9 @@ task TransformGISAID {
 task AlignGISAID {
     input {
         String docker_image_id
-        String aws_region = "u-west-2"
+        String aws_region
         String processed_gisaid_object_id
-        String db_data_bucket = "aspen-db-data-dev"
+        String db_data_bucket
     }
 
     command <<<
