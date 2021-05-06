@@ -1,7 +1,8 @@
 locals {
-  # TODO -- hardcoded mapping needs to be fixed.
-  env = "aspen-rdev" # FIXME
-  lambda_env = "swipe-aspen-rdev" # FIXME
+  env = "${var.stack_resource_prefix}-${var.deployment_stage}"
+  lambda_env = "swipe-${var.stack_resource_prefix}-${var.deployment_stage}"
+
+  # TODO, we should probably import this map from somewhere instead of hardcoding it.
   lambdas = {
     "preprocess-input" = "${local.lambda_env}-preprocess-input"
     "process-stage-output" = "${local.lambda_env}-process-stage-output"
@@ -16,7 +17,7 @@ locals {
     deployment_environment = local.env
     deployment_stage = var.deployment_stage
     remote_dev_prefix = var.remote_dev_prefix
-    aws_default_region = "us-west-2"
+    aws_default_region = "us-west-2" # FIXME hardcoded
     batch_ec2_job_queue_name = var.ec2_queue_arn
     batch_spot_job_queue_name = var.spot_queue_arn
     batch_job_definition_name = var.job_definition_name
