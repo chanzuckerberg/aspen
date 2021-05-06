@@ -4,18 +4,17 @@ from typing import Any, Iterable, Mapping, MutableSequence, Set, Tuple
 import boto3
 from flask import jsonify, make_response, session
 from sqlalchemy import func, or_
-from sqlalchemy.orm import joinedload, Session
+from sqlalchemy.orm import aliased, joinedload, Session
 
 from aspen.app.app import application, requires_auth
 from aspen.app.views.api_utils import format_datetime, get_usergroup_query
 from aspen.database.connection import session_scope
 from aspen.database.models import (
     DataType,
-    PathogenGenome,
     PhyloRun,
     PhyloTree,
-    Workflow,
-    WorkflowInputs,
+    PhyloTreeSamples,
+    Sample,
     WorkflowStatusType,
 )
 from aspen.database.models.usergroup import Group, User
@@ -36,21 +35,27 @@ def phylo_trees():
             .one()
         )
         # TODO: Add subquery to fetch trees for which we have can-see permissions.
+        phylo_run_alias = aliased(PhyloRun)
         phylo_runs: Iterable[Tuple[PhyloRun, int]] = (
             db_session.query(
-                PhyloRun,
+                phylo_run_alias,
                 (
                     db_session.query(func.count(1))
-                    .select_from(PathogenGenome)
-                    .join(WorkflowInputs)
-                    .join(Workflow)
-                    .filter(Workflow.id == PhyloRun.workflow_id)
+                    .select_from(Sample)
+                    .join(PhyloTreeSamples)
+                    .join(
+                        PhyloTree,
+                        PhyloTreeSamples.columns.phylo_tree_id == PhyloTree.entity_id,
+                    )
+                    .filter(
+                        PhyloTree.producing_workflow_id == phylo_run_alias.workflow_id
+                    )
                 ).label("phylo_run_genome_count"),
             )
-            .options(joinedload(PhyloRun.outputs))
+            .options(joinedload(phylo_run_alias.outputs))
             .filter(
                 or_(
-                    PhyloRun.group_id.in_(
+                    phylo_run_alias.group_id.in_(
                         db_session.query(Group.id)
                         .join(User)
                         .filter(User.auth0_user_id == profile["user_id"])
@@ -59,7 +64,7 @@ def phylo_trees():
                     user.system_admin,
                 )
             )
-            .filter(PhyloRun.workflow_status == WorkflowStatusType.COMPLETED)
+            .filter(phylo_run_alias.workflow_status == WorkflowStatusType.COMPLETED)
         )
 
         # filter for only information we need in sample table view

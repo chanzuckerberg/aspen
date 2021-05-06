@@ -1,3 +1,7 @@
+data "aws_secretsmanager_secret" "aspen_config" {
+  name = "aspen-config"
+}
+
 data "aws_secretsmanager_secret" "gisaid-download-credentials" {
   name = "gisaid-download-credentials"
 }

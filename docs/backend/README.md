@@ -134,6 +134,8 @@ In [3]:
 
 ### Profiling SqlAlchemy queries
 
+#### Interactive profiling
+
 `aspen-cli db interact` has a `--profile` option that prints out every query that's executed and how long they take:
 
 ```
@@ -153,6 +155,10 @@ DEBUG:sqltime:Total Time: 0.012416
 
 In [3]:
 ```
+
+#### Profiling in code
+
+The module [`aspen.database.connection`](../../src/backend/aspen/database/connection.py) contains a number of methods to manage the capture of queries issued by sqlalchemy.  `enable_profiling()`/`disable_profiling()` can be used to enable and disable profiling, and `enable_profiling_ctx()` is a [context manager](https://docs.python.org/3/reference/compound_stmts.html#with) that can be used to manage a block of code that requires profiling.
 
 ### Autogeneration of schema migration
 
@@ -174,10 +180,10 @@ If you add a third-party library (directly or indirectly) that does not support 
 ## Adding new users to the staging db:
 * get username / password credentials from aws secrets manager (:
   * `aws secretsmanager get-secret-value --secret-id aspen-config`
-  
+
 * get RDS host and port information:
   * `aws rds describe-db-instances --db-instance-identifier aspen-db`
-  
+
 * connect to aspen db using psql:
   * `psql -h <RDS host> -p <RDS port> -U user_rw aspen_db`
     ```sql

@@ -786,7 +786,7 @@ class Orchestrator:
 
 
 class ArtifactBuilder:
-    """Builds artifacts such asx Docker containers. For now, this is hard coded to use docker-compose as the backend."""
+    """Builds artifacts such as Docker containers. For now, this is hard coded to use docker-compose as the backend."""
 
     DEFAULT_CONFIG = {"compose_file": "docker-compose.yml", "env": None}
 
@@ -803,27 +803,35 @@ class ArtifactBuilder:
 
     def build(self, artifacts=None):
         env = self.get_env()
-        compose_args = ["--file", self.config["compose_file"]]
-        if self.config["env"]:
-            compose_args += ["--env", self.config["env"]]
+        compose_args = self.get_compose_args()
         cmd = ["docker-compose"] + compose_args + ["build"]
         if artifacts:
             cmd += artifacts
         subprocess.check_call(cmd, env=env)
 
-        cmd = ["docker-compose"] + compose_args + ["config"]
-        config_file = subprocess.check_output(cmd, env=env)
-        result = yaml.load(config_file, Loader=yaml.Loader)
         images = {}
-        for service_name, service in result["services"].items():
+        for service_name, service in self.get_compose_services().items():
             if "build" in service:
                 if artifacts and service_name not in artifacts:
                     continue
                 images[service_name] = service["image"]
         return images
 
+    def get_compose_args(self):
+        compose_args = ["--file", self.config["compose_file"]]
+        if self.config["env"]:
+            compose_args += ["--env", self.config["env"]]
+        return compose_args
+
+    def get_compose_services(self):
+        env = self.get_env()
+        cmd = ["docker-compose"] + self.get_compose_args() + ["config"]
+        config_file = subprocess.check_output(cmd, env=env)
+        result = yaml.load(config_file, Loader=yaml.Loader)
+        return result["services"]
+
     def push(self, ecrs, images, tags):
-        print("Tagging images...")
+        print(f"Tagging images with tags {tags}")
         env = self.get_env()
         for artifact_id, registry in ecrs.items():
             if images and artifact_id not in images:
@@ -1056,8 +1064,14 @@ def addtags(ctx, images, source_tag, dest_tag):
     config = ctx.obj["config"]
     ecrs = config.ecrs
     ecr_client = AwsSession.get_client(ctx, "ecr")
+    # Use a list of images managed by docker-compose by default.
+    if not images:
+        builder_config = {"ecr_repo": "", "env": ""}  # We don't need ECR names here.
+        builder = ArtifactBuilder(builder_config)
+        images = builder.get_compose_services().keys()
     for image_name, repository in ecrs.items():
-        if images and image_name not in images:
+        if image_name not in images:
+            print(f"Skipping {image_name}")
             continue
         print(f"retagging {image_name} from {source_tag} to {', '.join(dest_tag)}")
         registry_id = repository["url"].split(".")[0]

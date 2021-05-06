@@ -283,11 +283,8 @@ def import_project(
                 )
                 sample.uploaded_pathogen_genome.sequence = consensus_genome.fasta
 
-                # if it's a dphczbid, then it might have genome submission info.
-                if (
-                    isinstance(czbid, DphCZBID)
-                    and czbid.genome_submission_info is not None
-                ):
+                # check to see if there's genome submission info.
+                if czbid.genome_submission_info is not None:
                     repository_type: Optional[PublicRepositoryType] = None
                     if czbid.genome_submission_info.gisaid_accession is not None:
                         repository_type = PublicRepositoryType.GISAID

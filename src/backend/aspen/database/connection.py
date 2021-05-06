@@ -67,20 +67,33 @@ def get_db_uri(runtime_config: Config, readonly: bool = False) -> str:
     return runtime_config.DATABASE_URI
 
 
+sqltime_logger = logging.getLogger("sqltime")
+sqltime_logger.setLevel(logging.DEBUG)
+
+
+def _before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+    conn.info.setdefault("query_start_time", []).append(time.time())
+    sqltime_logger.debug("Start Query: %s", statement)
+
+
+def _after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+    total = time.time() - conn.info["query_start_time"].pop(-1)
+    sqltime_logger.debug("Query Complete!")
+    sqltime_logger.debug("Total Time: %f", total)
+
+
 def enable_profiling():
-    logging.basicConfig()
-    logger = logging.getLogger("sqltime")
-    logger.setLevel(logging.DEBUG)
+    event.listen(Engine, "before_cursor_execute", _before_cursor_execute)
+    event.listen(Engine, "after_cursor_execute", _after_cursor_execute)
 
-    @event.listens_for(Engine, "before_cursor_execute")
-    def before_cursor_execute(
-        conn, cursor, statement, parameters, context, executemany
-    ):
-        conn.info.setdefault("query_start_time", []).append(time.time())
-        logger.debug("Start Query: %s", statement)
 
-    @event.listens_for(Engine, "after_cursor_execute")
-    def after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
-        total = time.time() - conn.info["query_start_time"].pop(-1)
-        logger.debug("Query Complete!")
-        logger.debug("Total Time: %f", total)
+def disable_profiling():
+    event.remove(Engine, "before_cursor_execute", _before_cursor_execute)
+    event.remove(Engine, "after_cursor_execute", _after_cursor_execute)
+
+
+@contextmanager
+def enable_profiling_ctx():
+    enable_profiling()
+    yield
+    disable_profiling()

@@ -5,7 +5,6 @@ from typing import Iterable, Mapping, MutableMapping
 
 from auth0.v3 import authentication as auth0_authentication
 from auth0.v3 import management as auth0_management
-from sqlalchemy import or_
 from sqlalchemy.orm import configure_mappers, joinedload, Session
 
 from aspen.config import config as aspen_config
@@ -83,17 +82,10 @@ def import_project_users(
         covidhub_users: Iterable[covidtracker.UsersGroups] = covidhub_session.query(
             covidtracker.UsersGroups
         ).filter(
-            or_(
-                covidtracker.UsersGroups.group_id.in_(
-                    covidhub_session.query(covidtracker.Group.id).filter(
-                        covidtracker.Group.name.in_(["Admin", "CDPH"])
-                    )
-                ),
-                covidtracker.UsersGroups.group_id.in_(
-                    covidhub_session.query(covidtracker.GroupToProjects.group_id)
-                    .join(Project)
-                    .filter(Project.rr_project_id == rr_project_id)
-                ),
+            covidtracker.UsersGroups.group_id.in_(
+                covidhub_session.query(covidtracker.GroupToProjects.group_id)
+                .join(Project)
+                .filter(Project.rr_project_id == rr_project_id)
             ),
         )
 
