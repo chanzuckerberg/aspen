@@ -5,6 +5,7 @@ import { Menu } from "semantic-ui-react";
 import { fetchSamples, fetchTrees } from "src/common/api";
 import { DataSubview } from "src/common/components";
 import { SampleRenderer, TreeRenderer } from "./cellRenderers";
+import { SampleHeader } from "./headerRenderer";
 import { SAMPLE_HEADERS, TREE_HEADERS } from "./headers";
 import style from "./index.module.scss";
 import { Container } from "./style";
@@ -41,6 +42,7 @@ const Data: FunctionComponent = () => {
   const dataCategories = [
     {
       data: samples,
+      headerRenderer: SampleHeader,
       headers: SAMPLE_HEADERS,
       isDataLoading,
       renderer: SampleRenderer,
@@ -105,6 +107,7 @@ const Data: FunctionComponent = () => {
             isLoading={category.isDataLoading}
             data={category.data}
             headers={category.headers}
+            headerRenderer={category.headerRenderer}
             renderer={category.renderer}
           />
         )}

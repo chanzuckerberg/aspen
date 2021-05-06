@@ -9,6 +9,7 @@ interface Props {
   headers: Header[];
   isLoading: boolean;
   renderer?: CustomRenderer;
+  headerRenderer?: CustomRenderer;
 }
 
 interface InputOnChangeData {
@@ -30,6 +31,7 @@ const DataSubview: FunctionComponent<Props> = ({
   headers,
   isLoading,
   renderer,
+  headerRenderer,
 }: Props) => {
   // we are modifying state using hooks, so we need a reducer
   const [state, dispatch] = useReducer(searchReducer, {
@@ -76,6 +78,7 @@ const DataSubview: FunctionComponent<Props> = ({
             isLoading={isLoading}
             data={tableData}
             headers={headers}
+            headerRenderer={headerRenderer}
             renderer={renderer}
           />
         </div>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Modal } from "src/common/components";
+import { defaultCellRenderer } from "src/common/components/library/data_table";
 import dataTableStyle from "src/common/components/library/data_table/index.module.scss";
 import { ReactComponent as ExternalLinkIcon } from "src/common/icons/ExternalLink.svg";
 import { ReactComponent as TreeIcon } from "src/common/icons/PhyloTree.svg";
@@ -12,12 +13,19 @@ import {
   stringGuard,
 } from "src/common/utils";
 
-const DEFAULT_RENDERER = (value: JSONPrimitive): JSX.Element => {
-  return <div className={dataTableStyle.cell}>{value}</div>;
-};
-
 const SAMPLE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
-  privateId: (value: JSONPrimitive): JSX.Element => (
+  // DEBUG
+  // DEBUG
+  // DEBUG
+  // DEBUG
+  // DEBUG
+  // DEBUG
+  // REMOVE BEFORE PR
+  gisaid: () => <div></div>,
+  lineage: ({ value }): JSX.Element => (
+    <div className={dataTableStyle.cell}>{value.lineage}</div>
+  ),
+  privateId: ({ value }): JSX.Element => (
     <div className={dataTableStyle.cell}>
       {<SampleIcon className={dataTableStyle.icon} />}
       {value}
@@ -27,11 +35,11 @@ const SAMPLE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
 
 const SampleRenderer = createTableCellRenderer(
   SAMPLE_CUSTOM_RENDERERS,
-  DEFAULT_RENDERER
+  defaultCellRenderer
 );
 
 const TREE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
-  downloadLink: (value: JSONPrimitive): JSX.Element => {
+  downloadLink: ({ value }): JSX.Element => {
     const stringValue = stringGuard(value);
     return (
       <div className={dataTableStyle.cell}>
@@ -41,7 +49,7 @@ const TREE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
       </div>
     );
   },
-  name: (value: JSONPrimitive): JSX.Element => {
+  name: ({ value }): JSX.Element => {
     const stringValue = stringGuard(value);
 
     const treeID = stringValue.split(" ")[0];
@@ -57,7 +65,7 @@ const TREE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
 
 const TreeRenderer = createTableCellRenderer(
   TREE_CUSTOM_RENDERERS,
-  DEFAULT_RENDERER
+  defaultCellRenderer
 );
 
 export { SampleRenderer, TreeRenderer };

@@ -13,12 +13,17 @@ interface CustomTableRenderProps {
   index: number;
 }
 
-interface CustomRenderer extends FunctionComponent<CustomTableRenderProps> {
-  ({ header, value, item, index }): JSX.Element;
-}
+type CustomRenderer = ({
+  header,
+  value,
+  item,
+  index,
+}: CustomTableRenderProps) => JSX.Element;
 
-type CellRenderer = (
-  value: JSONPrimitive,
-  item: TableItem,
-  index: number
-) => JSX.Element;
+type CellRendererProps = Omit<CustomTableRenderProps, "header">;
+
+type CellRenderer = ({ value, item, index }: CellRendererProps) => JSX.Element;
+
+type HeaderRendererProps = Omit<CustomTableRenderProps, "item", "value">;
+
+type HeaderRenderer = ({ header, idex }: HeaderRendererProps) => JSX.Element;

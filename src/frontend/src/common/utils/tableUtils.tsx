@@ -7,20 +7,33 @@ import { createConfirmButton } from "./TreeModal/ConfirmButton";
 const UNDEFINED_TEXT = "---";
 
 export function createTableCellRenderer(
-  customRenderers: Record<string | number, CellRenderer>,
+  customRenderers: Record<string, CellRenderer>,
   defaultRenderer: CellRenderer
 ): CustomRenderer {
   return ({ header, value, item, index }: CustomTableRenderProps) => {
-    let unwrappedValue = value;
-    if (unwrappedValue === undefined) {
-      unwrappedValue = UNDEFINED_TEXT;
-    }
-    if (customRenderers[header.key] !== undefined) {
-      const cellRenderFunction = customRenderers[header.key];
-      return cellRenderFunction(unwrappedValue, item, index);
-    }
+    const unwrappedValue = value || UNDEFINED_TEXT;
 
-    return defaultRenderer(unwrappedValue, item, index);
+    const renderer = customRenderers[header.key] || defaultRenderer;
+
+    return renderer({
+      index,
+      item,
+      value: unwrappedValue,
+    });
+  };
+}
+
+export function createTableHeaderRenderer(
+  customRenderers: Record<string, HeaderRenderer>,
+  defaultRenderer: HeaderRenderer
+): CustomRenderer {
+  return ({ header, index }: CustomTableRenderProps): JSX.Element => {
+    const renderer = customRenderers[header.key] || defaultRenderer;
+
+    return renderer({
+      header,
+      index,
+    });
   };
 }
 

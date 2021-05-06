@@ -20,6 +20,10 @@ export const SAMPLE_HEADERS: Header[] = [
     text: "Collection Location",
   },
   {
+    key: "lineage",
+    text: "Lineage",
+  },
+  {
     key: "gisaid",
     text: "GISAID",
   },

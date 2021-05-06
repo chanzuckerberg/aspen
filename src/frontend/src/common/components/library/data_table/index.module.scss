@@ -23,6 +23,11 @@
     @include font-header-s;
 
     color: $gray-dark;
+
+    &:hover {
+      color: black;
+      cursor: default;
+    }
   }
 }
 
@@ -49,11 +54,6 @@
   align-items: center;
   width: 100%;
   padding: $space-l 0;
-}
-
-.tableRow {
-  display: flex;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .tableContent {

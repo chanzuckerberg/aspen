@@ -3,12 +3,14 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import { EmptyState } from "../data_subview/components/EmptyState";
 import style from "./index.module.scss";
+import { TableRow } from "./style";
 
 interface Props {
   data?: TableItem[];
   headers: Header[];
-  renderer?: CustomRenderer;
   isLoading: boolean;
+  renderer?: CustomRenderer;
+  headerRenderer?: HeaderRenderer;
 }
 
 // (thuang): If item height changes, we need to update this value!
@@ -18,30 +20,35 @@ const LOADING_STATE_ROW_COUNT = 10;
 
 const UNDEFINED_TEXT = "---";
 
-function defaultCellRenderer({ value }: CustomTableRenderProps): JSX.Element {
-  let displayData;
-  if (value === undefined) {
-    displayData = UNDEFINED_TEXT;
-  } else {
-    displayData = value;
-  }
+export function defaultCellRenderer({ value }: CellRendererProps): JSX.Element {
+  const displayData = value || UNDEFINED_TEXT;
+
   return <div className={style.cell}>{displayData}</div>;
 }
 
-const DataTable: FunctionComponent<Props> = ({
+export function defaultHeaderRenderer({
+  header,
+}: HeaderRendererProps): JSX.Element {
+  return (
+    <div key={header.key} className={style.headerCell}>
+      <div className={style.headerCellContent}>{header.text}</div>
+    </div>
+  );
+}
+
+export const DataTable: FunctionComponent<Props> = ({
   data = [],
   headers,
+  headerRenderer = defaultHeaderRenderer,
   renderer = defaultCellRenderer,
   isLoading,
 }: Props) => {
   const indexingKey = headers[0].key;
 
   // render functions
-  const headerRow = headers.map((column: Header) => (
-    <div key={column.key} className={style.headerCell}>
-      <div className={style.headerCellContent}>{column.text}</div>
-    </div>
-  ));
+  const headerRow = headers.map((header: Header, index) =>
+    headerRenderer({ header, index })
+  );
 
   const sampleRow = (item: TableItem): React.ReactNode => {
     if (isLoading) {
@@ -49,7 +56,19 @@ const DataTable: FunctionComponent<Props> = ({
     }
 
     return headers.map((header, index) => {
-      const value = item[header.key];
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // DEBUG
+      // MOCK LINEAGE DATA
+      const value = item[header.key] || {
+        last_updated: "2021-01-11",
+        lineage: "B.1.1.7",
+        probability: "1.0",
+        version: "2021-01-11",
+      };
 
       return (
         <div
@@ -65,11 +84,7 @@ const DataTable: FunctionComponent<Props> = ({
   function renderRow(props: ListChildComponentProps) {
     const item = data[props.index];
 
-    return (
-      <div className={style.tableRow} style={props.style}>
-        {sampleRow(item)}
-      </div>
-    );
+    return <TableRow style={props.style}>{sampleRow(item)}</TableRow>;
   }
 
   return (
@@ -95,5 +110,3 @@ const DataTable: FunctionComponent<Props> = ({
     </div>
   );
 };
-
-export { DataTable };
