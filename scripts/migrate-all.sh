@@ -4,6 +4,21 @@ set -Eeuo pipefail
 
 export AWS_PROFILE=genepi-dev
 
+
+# fetch the gisaid dataset and transform it.
+biohub_aws_acount=$(aws secretsmanager get-secret-value --secret-id czb-aws-access --query SecretString --output text)
+biohub_aws_access_key_id=$(echo "${biohub_aws_acount}" | jq -r .AWS_ACCESS_KEY_ID)
+biohub_aws_secret_access_key=$(echo "${biohub_aws_acount}" | jq -r .AWS_SECRET_ACCESS_KEY)
+
+mkdir -p ~/.aws
+echo
+[czi-biohub] \n
+aws_access_key_id = biohub_aws_access_key_id \n
+aws_secret_access_key = biohub_aws_secret_access_key \n
+\\ eof
+credentials
+
+
 COUNTY_INFO='{
         "marin": {"external_project_id": "RR089e", "internal_project_ids": ["RR089i"]},
         "contra_costa": {"external_project_id": "RR077e", "internal_project_ids": ["RR077i"]},
