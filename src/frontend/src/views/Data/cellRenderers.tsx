@@ -31,12 +31,22 @@ const SampleRenderer = createTableCellRenderer(
 );
 
 const TREE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
+  accessionsLink: (value: JSONPrimitive): JSX.Element => {
+    const stringValue = stringGuard(value);
+    return (
+      <div className={dataTableStyle.cell}>
+        <a href={stringValue} download>
+          Download TSV
+        </a>
+      </div>
+    );
+  },
   downloadLink: (value: JSONPrimitive): JSX.Element => {
     const stringValue = stringGuard(value);
     return (
       <div className={dataTableStyle.cell}>
         <a href={stringValue} download>
-          Download
+          Download JSON
         </a>
       </div>
     );

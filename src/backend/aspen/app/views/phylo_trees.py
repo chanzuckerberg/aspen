@@ -152,3 +152,32 @@ def phylo_tree(phylo_tree_id: int):
     ] = f"attachment; filename={phylo_tree_id}.json"
 
     return response
+
+
+def _extract_accessions(accessions_list: list, node: dict):
+    node_attributes = node["node_attrs"]
+    if "external_accession" in node_attributes:
+        accessions_list.append(node_attributes["external_accession"]["value"])
+    if "children" in node:
+        for child in node["children"]:
+            _extract_accessions(accessions_list, child)
+    return accessions_list
+
+
+@application.route("/api/phylo_tree/sample_ids/<int:phylo_tree_id>", methods=["GET"])
+@requires_auth
+def tree_sample_ids(phylo_tree_id: int):
+    with session_scope(application.DATABASE_INTERFACE) as db_session:
+        phylo_tree_data = _process_phylo_tree(
+            db_session, phylo_tree_id, session["profile"]["user_id"]
+        )
+    accessions = _extract_accessions([], phylo_tree_data["tree"])
+    tsv_accessions = "Sample Identifier\n" + "\n".join(accessions)
+
+    response = make_response(tsv_accessions)
+    response.headers["Content-Type"] = "text/tsv"
+    response.headers[
+        "Content-Disposition"
+    ] = f"attachment; filename={phylo_tree_id}_sample_ids.tsv"
+
+    return response
