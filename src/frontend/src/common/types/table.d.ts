@@ -20,8 +20,6 @@ type CustomRenderer = ({
   index,
 }: CustomTableRenderProps) => JSX.Element;
 
-type CellRendererProps = Omit<CustomTableRenderProps, "header">;
-
 type CellRenderer = ({ value, item, index }: CellRendererProps) => JSX.Element;
 
 type HeaderRendererProps = Omit<CustomTableRenderProps, "item", "value">;

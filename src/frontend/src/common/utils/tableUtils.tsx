@@ -16,6 +16,7 @@ export function createTableCellRenderer(
     const renderer = customRenderers[header.key] || defaultRenderer;
 
     return renderer({
+      header,
       index,
       item,
       value: unwrappedValue,

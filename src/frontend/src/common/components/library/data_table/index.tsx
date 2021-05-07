@@ -1,9 +1,9 @@
-import React, { FunctionComponent } from "react";
+import React, { Fragment, FunctionComponent } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import { EmptyState } from "../data_subview/components/EmptyState";
 import style from "./index.module.scss";
-import { TableRow } from "./style";
+import { RowContent, TableRow } from "./style";
 
 interface Props {
   data?: TableItem[];
@@ -20,10 +20,16 @@ const LOADING_STATE_ROW_COUNT = 10;
 
 const UNDEFINED_TEXT = "---";
 
-export function defaultCellRenderer({ value }: CellRendererProps): JSX.Element {
+export function defaultCellRenderer({
+  value,
+}: CustomTableRenderProps): JSX.Element {
   const displayData = value || UNDEFINED_TEXT;
 
-  return <div className={style.cell}>{displayData}</div>;
+  return (
+    <RowContent>
+      <div className={style.cell}>{displayData}</div>
+    </RowContent>
+  );
 }
 
 export function defaultHeaderRenderer({
@@ -71,12 +77,9 @@ export const DataTable: FunctionComponent<Props> = ({
       };
 
       return (
-        <div
-          key={`${item[indexingKey]}-${header.key}`}
-          className={style.rowContent}
-        >
+        <Fragment key={`${item[indexingKey]}-${header.key}`}>
           {renderer({ header, index, item, value })}
-        </div>
+        </Fragment>
       );
     });
   };

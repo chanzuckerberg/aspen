@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { getColors } from "czifui";
+import { getColors, getSpacings } from "czifui";
 
 export const TableRow = styled.div`
   display: flex;
@@ -12,6 +12,19 @@ export const TableRow = styled.div`
       &:hover {
         background-color: ${colors?.primary[100]};
       }
+    `;
+  }}
+`;
+
+export const RowContent = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  ${(props) => {
+    const spacings = getSpacings(props);
+
+    return `
+      padding: ${spacings?.l}px 0;
     `;
   }}
 `;

@@ -1,9 +1,11 @@
 /* eslint-disable react/display-name */
 
+import { Tooltip } from "czifui";
 import React from "react";
 import { Modal } from "src/common/components";
 import { defaultCellRenderer } from "src/common/components/library/data_table";
 import dataTableStyle from "src/common/components/library/data_table/index.module.scss";
+import { RowContent } from "src/common/components/library/data_table/style";
 import { ReactComponent as ExternalLinkIcon } from "src/common/icons/ExternalLink.svg";
 import { ReactComponent as TreeIcon } from "src/common/icons/PhyloTree.svg";
 import { ReactComponent as SampleIcon } from "src/common/icons/Sample.svg";
@@ -12,6 +14,7 @@ import {
   createTreeModalInfo,
   stringGuard,
 } from "src/common/utils";
+import { Lineage, LineageTooltip } from "./components/LineageTooltip";
 
 const SAMPLE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
   // DEBUG
@@ -21,15 +24,25 @@ const SAMPLE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
   // DEBUG
   // DEBUG
   // REMOVE BEFORE PR
-  gisaid: () => <div></div>,
+  gisaid: () => (
+    <RowContent>
+      <div />
+    </RowContent>
+  ),
   lineage: ({ value }): JSX.Element => (
-    <div className={dataTableStyle.cell}>{value.lineage}</div>
+    <Tooltip title={<LineageTooltip lineage={value as Lineage} />}>
+      <RowContent>
+        <div className={dataTableStyle.cell}>{value.lineage}</div>
+      </RowContent>
+    </Tooltip>
   ),
   privateId: ({ value }): JSX.Element => (
-    <div className={dataTableStyle.cell}>
-      {<SampleIcon className={dataTableStyle.icon} />}
-      {value}
-    </div>
+    <RowContent>
+      <div className={dataTableStyle.cell}>
+        <SampleIcon className={dataTableStyle.icon} />
+        {value}
+      </div>
+    </RowContent>
   ),
 };
 
