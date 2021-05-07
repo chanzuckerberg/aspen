@@ -3,6 +3,11 @@ interface BioinformaticsType {
   type: "BioinformaticsType";
 }
 
+interface GISAID {
+  status: "submitted" | "not_eligible" | "accepted" | "rejected" | "no_info";
+  gisaid_id?: string;
+}
+
 interface Sample extends BioinformaticsType {
   type: "Sample";
   privateId: string;
@@ -10,7 +15,7 @@ interface Sample extends BioinformaticsType {
   uploadDate: string;
   collectionDate: string;
   collectionLocation: string;
-  gisaid?: string;
+  gisaid: GISAID;
 }
 
 interface Tree extends BioinformaticsType {

@@ -11,18 +11,32 @@ import {
   createTreeModalInfo,
   stringGuard,
 } from "src/common/utils";
+import { GISAIDCell, Subtext } from "./style";
+import { GISAID_STATUS_TO_TEXT } from "./utils/samples";
 
 const DEFAULT_RENDERER = (value: JSONPrimitive): JSX.Element => {
   return <div className={dataTableStyle.cell}>{value}</div>;
 };
 
 const SAMPLE_CUSTOM_RENDERERS: Record<string | number, CellRenderer> = {
-  privateId: (value: JSONPrimitive): JSX.Element => (
-    <div className={dataTableStyle.cell}>
-      {<SampleIcon className={dataTableStyle.icon} />}
-      {value}
-    </div>
-  ),
+  gisaid(value): JSX.Element {
+    const { gisaid_id, status } = (value as unknown) as Sample["gisaid"];
+
+    return (
+      <GISAIDCell className={dataTableStyle.cell}>
+        {GISAID_STATUS_TO_TEXT[status]}
+        {gisaid_id && <Subtext>{gisaid_id}</Subtext>}
+      </GISAIDCell>
+    );
+  },
+  privateId(value: JSONPrimitive): JSX.Element {
+    return (
+      <div className={dataTableStyle.cell}>
+        {<SampleIcon className={dataTableStyle.icon} />}
+        {value}
+      </div>
+    );
+  },
 };
 
 const SampleRenderer = createTableCellRenderer(

@@ -82,7 +82,7 @@ const USER_MAP = new Map<string, keyof User>([
   ["auth0_user_id", "auth0UserId"],
   ["group_admin", "groupAdmin"],
   ["system_admin", "systemAdmin"],
-  ["group_id", "groupdId"],
+  ["group_id", "groupId"],
   ["agreed_to_tos", "agreedToTos"],
 ]);
 export const fetchUserData = (): Promise<UserResponse> =>

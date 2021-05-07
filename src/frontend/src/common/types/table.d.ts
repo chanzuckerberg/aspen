@@ -8,7 +8,7 @@ type TableItem = Record<string | number, JSONPrimitive>;
 
 interface CustomTableRenderProps {
   header: Header;
-  value: JSONPrimitive | undefined;
+  value?: JSONPrimitive;
   item: TableItem;
   index: number;
 }
