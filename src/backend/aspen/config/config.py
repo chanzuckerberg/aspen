@@ -197,3 +197,9 @@ class Config(object):
     @property
     def DATABASE_READONLY_URI(self) -> str:
         raise NotImplementedError()
+
+    ####################################################################################
+    # s3 properties
+    @property
+    def EXTERNAL_AUSPICE_BUCKET(self) -> str:
+        return self.AWS_SECRET["S3/external_auspice_bucket"]
