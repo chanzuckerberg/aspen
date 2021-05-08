@@ -14,6 +14,8 @@ from aspen.database.connection import (
     SqlAlchemyInterface,
 )
 from aspen.database.models import (
+    AlignRead,
+    Bam,
     CallConsensus,
     CalledPathogenGenome,
     FilterRead,
@@ -66,10 +68,14 @@ def cli(
                 .subqueryload(
                     CalledPathogenGenome.producing_workflow.of_type(CallConsensus)
                 )
+                # load the BAMs that generated the called pathogen genomes.
+                .subqueryload(CallConsensus.inputs.of_type(Bam))
+                # load the workflows that generated the consensus calls.
+                .subqueryload(Bam.producing_workflow.of_type(AlignRead))
                 # load the host-filtered sequencing reads that generated the called
                 # pathogen genomes.
                 .subqueryload(
-                    CallConsensus.inputs.of_type(HostFilteredSequencingReadsCollection)
+                    AlignRead.inputs.of_type(HostFilteredSequencingReadsCollection)
                 )
                 # load the workflows that generated the host-filtered sequencing
                 # reads.
