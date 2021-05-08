@@ -181,6 +181,9 @@ def import_project(
         ] = collections.defaultdict(set)
         for czbid, (external_accession, _) in internal_czb_ids_metadata.items():
             external_accession_to_czbids[external_accession].add(czbid)
+        for czbid in group_czbids:
+            if isinstance(czbid, DphCZBID):
+                external_accession_to_czbids[czbid.external_accession].add(czbid.czb_id)
         czbids_to_process: MutableSequence[CZBID] = list()
         for external_accession, czbids in external_accession_to_czbids.items():
             if len(czbids) > 1:
@@ -193,12 +196,18 @@ def import_project(
                 ] = list()
                 for czbid in czbids:
                     consensus_genome = czbid_to_consensus_genomes.get(czbid, None)
+                    if czbid in internal_czb_ids_metadata:
+                        collection_date = internal_czb_ids_metadata[czbid][1]
+                    else:
+                        czbid_obj = czbid_lookup_by_str[czbid]
+                        assert isinstance(czbid_obj, DphCZBID)
+                        collection_date = czbid_obj.collection_date
                     czbids_sorted_by_value_desc.append(
                         (
                             consensus_genome.recovered_sites
                             if consensus_genome is not None
                             else -1,
-                            internal_czb_ids_metadata[czbid][1],
+                            collection_date,
                             czbid,
                         )
                     )
@@ -207,7 +216,7 @@ def import_project(
                 warnings.warn(
                     f"External accession {external_accession} represented by multiple"
                     f" czbids: {czbids}.  Choosing {picked_czbid_str} as the czbid for"
-                    "this sample."
+                    " this sample."
                 )
                 czbids_to_process.append(czbid_lookup_by_str[picked_czbid_str])
             else:
