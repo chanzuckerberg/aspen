@@ -2,7 +2,7 @@ deploy-tf-initial: environment-set init-tf
 	terraform apply
 
 deploy-tf: environment-set init-tf
-	TF_VAR_connect_db_password=$$(aws secretsmanager get-secret-value --secret-id aspen-config --query SecretString --output text | jq -r .DB.admin_password) terraform apply
+	TF_VAR_connect_db_password=$$(aws secretsmanager get-secret-value --secret-id aspen-config --query SecretString --output text | jq -r '."DB/admin_password"') terraform apply
 
 environment-set:
 	@[ "$(DEPLOYMENT_ENVIRONMENT)" != "" ] || { echo "Please run \"source environment\" in the repo root directory before running terraform commands"; exit 1; }

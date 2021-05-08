@@ -77,9 +77,9 @@ def set_passwords_from_secret(ctx):
     )
 
     for username, password in (
-        (admin_username, secrets["DB"]["admin_password"]),
-        (default_db_credentials["rw_username"], secrets["DB"]["rw_password"]),
-        (default_db_credentials["ro_username"], secrets["DB"]["ro_password"]),
+        (admin_username, secrets["DB/admin_password"]),
+        (default_db_credentials["rw_username"], secrets["DB/rw_password"]),
+        (default_db_credentials["ro_username"], secrets["DB/ro_password"]),
     ):
         db_interface.engine.execute(f"""ALTER USER {username} PASSWORD '{password}'""")
 
