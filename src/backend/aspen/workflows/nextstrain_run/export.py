@@ -17,6 +17,7 @@ from aspen.database.connection import (
 from aspen.database.models import (
     Accession,
     AlignedGisaidDump,
+    Bam,
     CalledPathogenGenome,
     Entity,
     HostFilteredSequencingReadsCollection,
@@ -90,8 +91,11 @@ def cli(
                 )
                 # load the workflows that generated the called pathogen genomes
                 .subqueryload(phylo_run_inputs.producing_workflow)
-                # load the host-filtered sequencing reads that generated the called
-                # pathogen genomes.
+                # load the BAMs that generated the called pathogen genomes.
+                .subqueryload(Workflow.inputs)
+                # load the workflows that generated the BAMs.
+                .subqueryload(Entity.producing_workflow)
+                # load the host-filtered sequencing reads that generated the BAMs.
                 .subqueryload(Workflow.inputs)
                 # load the workflows that generated the host-filtered sequencing
                 # reads.
@@ -128,9 +132,9 @@ def cli(
             if isinstance(pathogen_genome, UploadedPathogenGenome)
         }
         sequencing_reads_collections = {
-            pathogen_genome.get_parents(HostFilteredSequencingReadsCollection)[
-                0
-            ].get_parents(SequencingReadsCollection)[0]
+            pathogen_genome.get_parents(Bam)[0]
+            .get_parents(HostFilteredSequencingReadsCollection)[0]
+            .get_parents(SequencingReadsCollection)[0]
             for pathogen_genome in pathogen_genomes
             if isinstance(pathogen_genome, CalledPathogenGenome)
         }
