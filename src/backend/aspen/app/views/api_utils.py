@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.query import Query
@@ -19,5 +20,8 @@ def format_date(dt: datetime.date, format="%Y-%m-%d") -> str:
     return dt.strftime(format)
 
 
-def format_datetime(dt: datetime.datetime, format="%Y-%m-%d %I:%M%p") -> str:
-    return dt.strftime(format)
+def format_datetime(dt: Optional[datetime.datetime], format="%Y-%m-%d %I:%M%p") -> str:
+    if dt is not None:
+        return dt.strftime(format)
+    else:
+        return "N/A"

@@ -39,13 +39,14 @@ def test_samples_view(
             {
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
-                "private_identifier": sample.private_identifier,
-                "public_identifier": sample.public_identifier,
-                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
+                "czb_failed_genome_recovery": False,
                 "gisaid": {
                     "status": "accepted",
                     "gisaid_id": sequencing_read.accessions()[0].public_identifier,
                 },
+                "private_identifier": sample.private_identifier,
+                "public_identifier": sample.public_identifier,
+                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
             }
         ]
     }
@@ -81,10 +82,11 @@ def test_samples_view_gisaid_rejected(
             {
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
+                "czb_failed_genome_recovery": False,
+                "gisaid": {"status": "rejected", "gisaid_id": None},
                 "private_identifier": sample.private_identifier,
                 "public_identifier": sample.public_identifier,
                 "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
-                "gisaid": {"status": "rejected", "gisaid_id": None},
             }
         ]
     }
@@ -111,10 +113,11 @@ def test_samples_view_gisaid_no_info(
             {
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
+                "czb_failed_genome_recovery": False,
+                "gisaid": {"status": "no_info", "gisaid_id": None},
                 "private_identifier": sample.private_identifier,
                 "public_identifier": sample.public_identifier,
                 "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
-                "gisaid": {"status": "no_info", "gisaid_id": None},
             }
         ]
     }
@@ -130,7 +133,6 @@ def test_samples_view_gisaid_not_eligible(
     user = user_factory(group)
     # Maek the sample as failed
     sample = sample_factory(group, czb_failed_genome_recovery=True)
-    sequencing_read = sequencing_read_factory(sample)
     session.add(group)
     session.commit()
     with client.session_transaction() as sess:
@@ -141,10 +143,11 @@ def test_samples_view_gisaid_not_eligible(
             {
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
+                "czb_failed_genome_recovery": True,
+                "gisaid": {"status": "not_eligible", "gisaid_id": None},
                 "private_identifier": sample.private_identifier,
                 "public_identifier": sample.public_identifier,
-                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
-                "gisaid": {"status": "not_eligible", "gisaid_id": None},
+                "upload_date": api_utils.format_datetime(None),
             }
         ]
     }
@@ -178,10 +181,11 @@ def test_samples_view_gisaid_submitted(
             {
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
+                "czb_failed_genome_recovery": False,
+                "gisaid": {"status": "submitted", "gisaid_id": None},
                 "private_identifier": sample.private_identifier,
                 "public_identifier": sample.public_identifier,
                 "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
-                "gisaid": {"status": "submitted", "gisaid_id": None},
             }
         ]
     }
@@ -249,17 +253,18 @@ def test_samples_view_system_admin(
         {
             "collection_date": api_utils.format_date(sample.collection_date),
             "collection_location": sample.location,
-            "private_identifier": sample.private_identifier,
-            "public_identifier": sample.public_identifier,
-            "upload_date": api_utils.format_datetime(
-                sequencing_read_collection.upload_date
-            ),
+            "czb_failed_genome_recovery": False,
             "gisaid": {
                 "status": "accepted",
                 "gisaid_id": sequencing_read_collection.accessions()[
                     0
                 ].public_identifier,
             },
+            "private_identifier": sample.private_identifier,
+            "public_identifier": sample.public_identifier,
+            "upload_date": api_utils.format_datetime(
+                sequencing_read_collection.upload_date
+            ),
         }
     ]
 
@@ -306,16 +311,17 @@ def test_samples_view_cansee_metadata(
         {
             "collection_date": api_utils.format_date(sample.collection_date),
             "collection_location": sample.location,
-            "public_identifier": sample.public_identifier,
-            "upload_date": api_utils.format_datetime(
-                sequencing_read_collection.upload_date
-            ),
+            "czb_failed_genome_recovery": False,
             "gisaid": {
                 "status": "accepted",
                 "gisaid_id": sequencing_read_collection.accessions()[
                     0
                 ].public_identifier,
             },
+            "public_identifier": sample.public_identifier,
+            "upload_date": api_utils.format_datetime(
+                sequencing_read_collection.upload_date
+            ),
         }
     ]
 
@@ -353,17 +359,18 @@ def test_samples_view_cansee_all(
         {
             "collection_date": api_utils.format_date(sample.collection_date),
             "collection_location": sample.location,
-            "private_identifier": sample.private_identifier,
-            "public_identifier": sample.public_identifier,
-            "upload_date": api_utils.format_datetime(
-                sequencing_read_collection.upload_date
-            ),
+            "czb_failed_genome_recovery": False,
             "gisaid": {
                 "status": "accepted",
                 "gisaid_id": sequencing_read_collection.accessions()[
                     0
                 ].public_identifier,
             },
+            "private_identifier": sample.private_identifier,
+            "public_identifier": sample.public_identifier,
+            "upload_date": api_utils.format_datetime(
+                sequencing_read_collection.upload_date
+            ),
         }
     ]
 
@@ -406,13 +413,14 @@ def test_samples_failed_accession(
             {
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
-                "private_identifier": sample.private_identifier,
-                "public_identifier": sample.public_identifier,
-                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
+                "czb_failed_genome_recovery": False,
                 "gisaid": {
                     "status": "accepted",
                     "gisaid_id": "public_identifier_succeeded",
                 },
+                "private_identifier": sample.private_identifier,
+                "public_identifier": sample.public_identifier,
+                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
             }
         ]
     }
@@ -457,13 +465,14 @@ def test_samples_multiple_accession(
             {
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
-                "private_identifier": sample.private_identifier,
-                "public_identifier": sample.public_identifier,
-                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
+                "czb_failed_genome_recovery": False,
                 "gisaid": {
                     "status": "accepted",
                     "gisaid_id": "public_identifier_later",
                 },
+                "private_identifier": sample.private_identifier,
+                "public_identifier": sample.public_identifier,
+                "upload_date": api_utils.format_datetime(sequencing_read.upload_date),
             }
         ]
     }

@@ -37,6 +37,8 @@ def _format_created_date(sample: Sample) -> str:
         return api_utils.format_datetime(sample.sequencing_reads_collection.upload_date)
     elif sample.uploaded_pathogen_genome is not None:
         return api_utils.format_datetime(sample.uploaded_pathogen_genome.upload_date)
+    elif sample.czb_failed_genome_recovery:
+        return api_utils.format_datetime(None)
     else:
         return "not yet uploaded"
 
@@ -44,12 +46,13 @@ def _format_created_date(sample: Sample) -> str:
 def _format_gisaid_accession(
     sample: Sample, entity_id_to_accession_map: Mapping[int, Accession]
 ) -> Mapping[str, Optional[str]]:
-    uploaded_entity = sample.get_uploaded_entity()
-    consuming_workflows = uploaded_entity.consuming_workflows
-    accession = entity_id_to_accession_map.get(uploaded_entity.entity_id, None)
     if sample.czb_failed_genome_recovery:
         # todo need to add the private option here for v3 a user uploads and flags a private sample
         return {"status": "not_eligible", "gisaid_id": None}
+
+    uploaded_entity = sample.get_uploaded_entity()
+    consuming_workflows = uploaded_entity.consuming_workflows
+    accession = entity_id_to_accession_map.get(uploaded_entity.entity_id, None)
     if accession is not None:
         return {"status": "accepted", "gisaid_id": accession.public_identifier}
     for workflow in consuming_workflows:
@@ -107,10 +110,16 @@ def samples():
             .all()
         )
         sample_entity_ids: Sequence[int] = [
-            sample.uploaded_pathogen_genome.entity_id
-            if sample.uploaded_pathogen_genome is not None
-            else sample.sequencing_reads_collection.entity_id
-            for sample in samples
+            sample_entity_id
+            for sample_entity_id in [
+                sample.uploaded_pathogen_genome.entity_id
+                if sample.uploaded_pathogen_genome is not None
+                else sample.sequencing_reads_collection.entity_id
+                if sample.sequencing_reads_collection is not None
+                else None
+                for sample in samples
+            ]
+            if sample_entity_id is not None
         ]
 
         # load the accessions.
@@ -146,6 +155,7 @@ def samples():
                 "collection_date": api_utils.format_date(sample.collection_date),
                 "collection_location": sample.location,
                 "gisaid": _format_gisaid_accession(sample, entity_id_to_accession_map),
+                "czb_failed_genome_recovery": sample.czb_failed_genome_recovery,
             }
 
             if (
