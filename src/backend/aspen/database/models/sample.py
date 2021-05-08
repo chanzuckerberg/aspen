@@ -198,7 +198,7 @@ class Sample(idbase, DictMixin):  # type: ignore
         Boolean,
         nullable=False,
         default=False,
-        server_default=sql.expression.true(),
+        server_default=sql.expression.false(),
         comment=(
             "This is set to true iff this is sample sequenced by CZB and failed genome "
             "recovery."
