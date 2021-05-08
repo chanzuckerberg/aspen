@@ -33,9 +33,9 @@ remote-pgconsole: # Get a psql console on a remote db (from OSX only!)
 	export ENV=$${ENV:=rdev}; \
 	export AWS_PROFILE=$(shell [ $(ENV) = prod ] && echo $(AWS_PROD_PROFILE) || echo $(AWS_DEV_PROFILE)); \
 	export config=$$(aws secretsmanager get-secret-value --secret-id $${ENV}/aspen-config | jq -r .SecretString ); \
-	export DB_URI=$$(jq -r '"postgresql://\(.DB.admin_username):\(.DB.admin_password)@127.0.0.1:5556/$(DB)"' <<< $$config); \
-	echo Connecting to $$(jq -r .DB.address <<< $$config)/$(DB) via $$(jq -r .bastion_host <<< $$config); \
-	ssh -f -o ExitOnForwardFailure=yes -L 5556:$$(jq -r .DB.address <<< $$config):5432 $$(jq -r .bastion_host <<< $$config) sleep 10; \
+	export DB_URI=$$(jq -r '"postgresql://\(."DB/admin_username"):\(."DB/admin_password")@127.0.0.1:5556/$(DB)"' <<< $$config); \
+	echo Connecting to $$(jq -r ."DB/address" <<< $$config)/$(DB) via $$(jq -r .bastion_host <<< $$config); \
+	ssh -f -o ExitOnForwardFailure=yes -L 5556:$$(jq -r ."DB/address" <<< $$config):5432 $$(jq -r .bastion_host <<< $$config) sleep 10; \
 	psql $${DB_URI}
 
 remote-dbconsole: .env.ecr # Get a python console on a remote db (from OSX only!)
@@ -43,9 +43,9 @@ remote-dbconsole: .env.ecr # Get a python console on a remote db (from OSX only!
 	export AWS_PROFILE=$(shell [ $(ENV) = prod ] && echo $(AWS_PROD_PROFILE) || echo $(AWS_DEV_PROFILE)); \
 	export config=$$(aws secretsmanager get-secret-value --secret-id $${ENV}/aspen-config | jq -r .SecretString ); \
 	export OSX_IP=$$(ipconfig getifaddr en0 || ipconfig getifaddr en1); \
-	export DB_URI=$$(jq -r '"postgresql://\(.DB.admin_username):\(.DB.admin_password)@'$${OSX_IP}':5555/$(DB)"' <<< $$config); \
-	echo Connecting to $$(jq -r .DB.address <<< $$config)/$(DB) via $$(jq -r .bastion_host <<< $$config); \
-	ssh -f -o ExitOnForwardFailure=yes -L $${OSX_IP}:5555:$$(jq -r .DB.address <<< $$config):5432 $$(jq -r .bastion_host <<< $$config) sleep 20; \
+	export DB_URI=$$(jq -r '"postgresql://\(."DB/admin_username"):\(."DB/admin_password")@'$${OSX_IP}':5555/$(DB)"' <<< $$config); \
+	echo Connecting to $$(jq -r ."DB/address" <<< $$config)/$(DB) via $$(jq -r .bastion_host <<< $$config); \
+	ssh -f -o ExitOnForwardFailure=yes -L $${OSX_IP}:5555:$$(jq -r ."DB/address" <<< $$config):5432 $$(jq -r .bastion_host <<< $$config) sleep 20; \
 	docker-compose $(COMPOSE_OPTS) run -e DB_URI backend sh -c 'pip install . && aspen-cli db --remote interact --connect'
 
 ### DOCKER LOCAL DEV #########################################

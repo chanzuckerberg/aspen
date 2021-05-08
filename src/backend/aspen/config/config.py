@@ -233,12 +233,12 @@ class RemoteDatabaseConfig(Config):
         # Allow db uri to be overridden by env var.
         if os.getenv("DB_URI"):
             return os.environ["DB_URI"]
-        username = self.AWS_SECRET["DB"]["rw_username"]
-        password = self.AWS_SECRET["DB"]["rw_password"]
+        username = self.AWS_SECRET["DB.rw_username"]
+        password = self.AWS_SECRET["DB.rw_password"]
 
         instance_address = None
         try:
-            instance_address = self.AWS_SECRET["DB"]["address"]
+            instance_address = self.AWS_SECRET["DB.address"]
         except KeyError:
             # TODO, remove this fallback when we tear down the old staging env.
             rds = boto3.client("rds")
