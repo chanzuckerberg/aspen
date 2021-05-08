@@ -6,9 +6,8 @@ import enumtables  # noqa: F401
 from alembic import context
 from sqlalchemy import create_engine
 
-from aspen.config import DevelopmentConfig
-from aspen.config.config import Config, RemoteDatabaseConfig
-from aspen.config.local import LocalConfig
+from aspen.config.config import Config
+from aspen.config.docker_compose import DockerComposeConfig
 from aspen.database.connection import get_db_uri
 from aspen.database.models import meta
 
@@ -55,9 +54,9 @@ def get_uri():
         )
 
     config_mapper: Mapping[str, Type[Config]] = {
-        "docker": LocalConfig,
-        "local": DevelopmentConfig,
-        "remote": RemoteDatabaseConfig,
+        "docker": DockerComposeConfig,
+        "local": Config,
+        "remote": Config,
     }
     return get_db_uri(config_mapper[db_env]())
 

@@ -2,7 +2,7 @@ import datetime
 
 import click
 
-from aspen.config.config import RemoteDatabaseConfig
+from aspen.config.config import Config
 from aspen.database.connection import (
     get_db_uri,
     init_db,
@@ -44,7 +44,7 @@ def cli(
     start_time_datetime = datetime.datetime.fromtimestamp(start_time)
     end_time_datetime = datetime.datetime.fromtimestamp(end_time)
 
-    interface: SqlAlchemyInterface = init_db(get_db_uri(RemoteDatabaseConfig()))
+    interface: SqlAlchemyInterface = init_db(get_db_uri(Config()))
     with session_scope(interface) as session:
         processed_gisaid_dump: ProcessedGisaidDump = (
             session.query(ProcessedGisaidDump)

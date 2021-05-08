@@ -3,7 +3,7 @@ import uuid
 from aspen.config import config
 
 
-class TestingConfig(config.Config, descriptive_name="test"):
+class TestingConfig(config.Config):
     def __init__(self, db_uri):
         self.db_uri = db_uri
 

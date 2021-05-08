@@ -7,7 +7,7 @@ from typing import Any, Mapping, MutableMapping, Set, Tuple
 import click
 from sqlalchemy.orm import aliased, joinedload, with_polymorphic
 
-from aspen.config.config import RemoteDatabaseConfig
+from aspen.config.config import Config
 from aspen.database.connection import (
     get_db_uri,
     init_db,
@@ -70,7 +70,7 @@ def cli(
     metadata_fh: io.TextIOBase,
     builds_file_fh: io.TextIOBase,
 ):
-    interface: SqlAlchemyInterface = init_db(get_db_uri(RemoteDatabaseConfig()))
+    interface: SqlAlchemyInterface = init_db(get_db_uri(Config()))
 
     with session_scope(interface) as session:
         # this allows us to load the secondary tables of a polymorphic type.  In this

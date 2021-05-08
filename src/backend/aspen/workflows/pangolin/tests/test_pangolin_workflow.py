@@ -21,7 +21,7 @@ def test_pangolin_export(mocker, session, postgres_database):
         session.commit()
 
     mocker.patch(
-        "aspen.config.config.RemoteDatabaseConfig.DATABASE_URI",
+        "aspen.config.config.Config.DATABASE_URI",
         new_callable=mocker.PropertyMock,
         return_value=postgres_database.as_uri(),
     )

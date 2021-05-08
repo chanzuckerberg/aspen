@@ -7,7 +7,6 @@ WORKDIR /usr/src/app
 COPY requirements.txt .
 COPY Pipfile* ./
 COPY third-party ./third-party/
-ENV FLASK_ENV=development
 ENV PIPENV_PYTHON=/usr/src/app/
 COPY setup.py .
 RUN pipenv install --dev --system --verbose && pipenv --clear

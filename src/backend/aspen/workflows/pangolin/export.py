@@ -4,7 +4,7 @@ from typing import Iterable, Sequence
 import click
 from sqlalchemy.orm import joinedload
 
-from aspen.config.config import RemoteDatabaseConfig
+from aspen.config.config import Config
 from aspen.database.connection import (
     get_db_uri,
     init_db,
@@ -18,7 +18,7 @@ from aspen.database.models import Sample, UploadedPathogenGenome
 @click.option("--sample-public-identifier", type=str, required=True, multiple=True)
 @click.option("sequences_fh", "--sequences", type=click.File("w"), required=True)
 def cli(sample_public_identifier: Sequence[str], sequences_fh: io.TextIOBase):
-    interface: SqlAlchemyInterface = init_db(get_db_uri(RemoteDatabaseConfig()))
+    interface: SqlAlchemyInterface = init_db(get_db_uri(Config()))
 
     with session_scope(interface) as session:
         all_samples: Iterable[Sample] = (
