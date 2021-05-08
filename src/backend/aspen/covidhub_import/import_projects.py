@@ -29,7 +29,7 @@ from covid_database import init_db as covidhub_init_db
 from covid_database import SqlAlchemyInterface as CSqlAlchemyInterface
 from covid_database import util as covidhub_database_util
 from covid_database.models import covidtracker
-from covid_database.models.enums import ConsensusGenomeStatus
+from covid_database.models.enums import ConsensusGenomeStatus, NGSProjectType
 from covid_database.models.ngs_sample_tracking import (
     ConsensusGenome,
     CZBID,
@@ -141,48 +141,57 @@ def import_project(
             )
             .all()
         }
-
-        internal_czb_ids_metadata: Mapping[str, Tuple[str, datetime.datetime]] = {
-            czbid: (
-                _get_external_accession(external_accession, czbid_lookup_by_str[czbid]),
-                collection_date,
-            )
-            for czbid, external_accession, collection_date in covidhub_session.query(
-                InternalCZBID.czb_id.label("czb_id"),
-                AccessionSample.location_submitter_id.label("external_accession"),
-                QPCRRun.completed_at.label("collection_date"),
-            )
-            .join(
-                Project,
-                CZBIDRnaPlate,
-                RNAPlate,
-                Extraction,
-                SamplePlate,
-                AccessionSample,
-                Aliquoting,
-                QPCRPlate,
-                QPCRRun,
-            )
-            .filter(Project.rr_project_id == rr_project_id)
-            .filter(QPCRResult.well_id == CZBIDRnaPlate.well_id)
-            .filter(AccessionSample.well_id == CZBIDRnaPlate.well_id)
-            .group_by(
-                Project.rr_project_id.label("project_id"),
-                Project.collaborating_institution.label("project_name"),
-                AccessionSample.location_submitter_id.label("external_accession"),
-                InternalCZBID.czb_id.label("czb_id"),
-                QPCRRun.completed_at.label("collection_date"),
-            )
-        }
+        czb_ids_metadata: Mapping[str, Tuple[str, datetime.datetime]] = {}
+        if project.type == NGSProjectType.INTERNAL:
+            czb_ids_metadata = {
+                czbid: (
+                    _get_external_accession(
+                        external_accession, czbid_lookup_by_str[czbid]
+                    ),
+                    collection_date,
+                )
+                for czbid, external_accession, collection_date in covidhub_session.query(
+                    InternalCZBID.czb_id.label("czb_id"),
+                    AccessionSample.location_submitter_id.label("external_accession"),
+                    QPCRRun.completed_at.label("collection_date"),
+                )
+                .join(
+                    Project,
+                    CZBIDRnaPlate,
+                    RNAPlate,
+                    Extraction,
+                    SamplePlate,
+                    AccessionSample,
+                    Aliquoting,
+                    QPCRPlate,
+                    QPCRRun,
+                )
+                .filter(Project.rr_project_id == rr_project_id)
+                .filter(QPCRResult.well_id == CZBIDRnaPlate.well_id)
+                .filter(AccessionSample.well_id == CZBIDRnaPlate.well_id)
+                .group_by(
+                    Project.rr_project_id.label("project_id"),
+                    Project.collaborating_institution.label("project_name"),
+                    AccessionSample.location_submitter_id.label("external_accession"),
+                    InternalCZBID.czb_id.label("czb_id"),
+                    QPCRRun.completed_at.label("collection_date"),
+                )
+            }
+        if project.type == NGSProjectType.DPH:
+            czb_ids_metadata = {
+                czbid.czb_id: (czbid.external_accession, czbid.collection_date)
+                for czbid in group_czbids
+            }
 
         # verify that we have no duplicates for external accessions
         external_accession_to_czbids: DefaultDict[
             str, set[str]
         ] = collections.defaultdict(set)
-        for czbid, (external_accession, _) in internal_czb_ids_metadata.items():
+        for czbid, (external_accession, _) in czb_ids_metadata.items():
             external_accession_to_czbids[external_accession].add(czbid)
         czbids_to_process: MutableSequence[CZBID] = list()
         for external_accession, czbids in external_accession_to_czbids.items():
+            warnings.warn(f"processing: external_access::ion: {external_accession}")
             if len(czbids) > 1:
                 # gather up the information for each czbid representing the external
                 # accesssion.
@@ -198,7 +207,7 @@ def import_project(
                             consensus_genome.recovered_sites
                             if consensus_genome is not None
                             else -1,
-                            internal_czb_ids_metadata[czbid][1],
+                            czb_ids_metadata[czbid][1],
                             czbid,
                         )
                     )
@@ -235,7 +244,7 @@ def import_project(
                 collection_date = czbid.collection_date
                 date_received = czbid.date_received or czbid.collection_date
             elif isinstance(czbid, InternalCZBID):
-                internal_metadata = internal_czb_ids_metadata[czbid.czb_id]
+                internal_metadata = czb_ids_metadata[czbid.czb_id]
                 external_accession = internal_metadata[0]
                 collection_date = internal_metadata[1]
                 date_received = internal_metadata[1]
