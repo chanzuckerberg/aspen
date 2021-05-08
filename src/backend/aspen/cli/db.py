@@ -1,7 +1,6 @@
 import datetime
 import json
 import os
-from pathlib import Path
 from typing import Iterable, MutableSequence, Optional, Sequence, Type
 
 import boto3
@@ -13,9 +12,8 @@ from sqlalchemy_utils import create_database, database_exists, drop_database
 
 from aspen import covidhub_import
 from aspen.cli.toplevel import cli
-from aspen.config.config import Config, RemoteDatabaseConfig
-from aspen.config.development import DevelopmentConfig
-from aspen.config.local import LocalConfig
+from aspen.config.config import Config
+from aspen.config.docker_compose import DockerComposeConfig
 from aspen.database.connection import (
     enable_profiling,
     get_db_uri,
@@ -38,9 +36,8 @@ from aspen.database.schema import create_tables_and_schema
 
 
 @cli.group()
-@click.option("--local", "config_cls", flag_value=DevelopmentConfig, default=True)
-@click.option("--remote", "config_cls", flag_value=RemoteDatabaseConfig)
-@click.option("--docker", "config_cls", flag_value=LocalConfig)
+@click.option("--remote", "config_cls", flag_value=Config)
+@click.option("--docker", "config_cls", flag_value=DockerComposeConfig, default=True)
 @click.option("--profile/--no-profile", default=False)
 @click.pass_context
 def db(ctx, config_cls: Type[Config], profile: bool):
@@ -51,37 +48,6 @@ def db(ctx, config_cls: Type[Config], profile: bool):
 
     if profile:
         enable_profiling()
-
-
-@db.command("set-passwords-from-secret")
-@click.pass_context
-def set_passwords_from_secret(ctx):
-    this_file = Path(__file__)
-    root = this_file.parent.parent.parent.parent.parent
-    default_db_credentials_file = root / "terraform.tfvars.json"
-    with default_db_credentials_file.open("r") as fh:
-        default_db_credentials = json.load(fh)["db_credentials"]
-    admin_username = default_db_credentials["admin_username"]
-    admin_password = default_db_credentials["admin_password"]
-
-    secrets = RemoteDatabaseConfig().AWS_SECRET
-
-    # find the db instance
-    rds = boto3.client("rds")
-    response = rds.describe_db_instances(DBInstanceIdentifier="aspen-db")
-    instance_info = response["DBInstances"][0]
-    instance_address = instance_info["Endpoint"]["Address"]
-    instance_port = instance_info["Endpoint"]["Port"]
-    db_interface = init_db(
-        f"postgresql://{admin_username}:{admin_password}@{instance_address}:{instance_port}/aspen_db"
-    )
-
-    for username, password in (
-        (admin_username, secrets["DB/admin_password"]),
-        (default_db_credentials["rw_username"], secrets["DB/rw_password"]),
-        (default_db_credentials["ro_username"], secrets["DB/ro_password"]),
-    ):
-        db_interface.engine.execute(f"""ALTER USER {username} PASSWORD '{password}'""")
 
 
 @db.command("setup")

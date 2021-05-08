@@ -2,7 +2,7 @@ import json
 
 import click
 
-from aspen.config.config import RemoteDatabaseConfig
+from aspen.config.config import Config
 from aspen.database.connection import (
     get_db_uri,
     init_db,
@@ -17,7 +17,7 @@ from aspen.database.models import ProcessedGisaidDump
 def cli(
     processed_gisaid_object_id: int,
 ):
-    interface: SqlAlchemyInterface = init_db(get_db_uri(RemoteDatabaseConfig()))
+    interface: SqlAlchemyInterface = init_db(get_db_uri(Config()))
 
     with session_scope(interface) as session:
         processed_gisaid_dump: ProcessedGisaidDump = (

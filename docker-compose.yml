@@ -54,10 +54,8 @@ services:
       - FRONTEND_URL=http://localhost:8000
       - AWS_REGION=us-west-2
       - ENV=local
-      - FLASK_ENV=local
       - FLASK_APP=aspen.main
       - FLASK_DEBUG=1
-      - FLASK_SECRET_KEY=DevelopmentKey
       - PYTHONPATH=.
     volumes:
       - ./src/backend:/usr/src/app
@@ -81,7 +79,6 @@ services:
       - AWS_SECRET_ACCESS_KEY=dev_secret_access_key
       - AWS_REGION=us-west-2
       - ENV=local
-      - FLASK_ENV=local
       - DB=docker
       - PYTHONPATH=.
     volumes:

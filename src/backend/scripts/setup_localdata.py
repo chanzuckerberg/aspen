@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from aspen.config.local import LocalConfig
+from aspen.config.docker_compose import DockerComposeConfig
 from aspen.database.connection import get_db_uri, init_db
 from aspen.database.models import (
     Group,
@@ -105,7 +105,7 @@ def create_test_data(engine):
 
 
 def get_engine():
-    config = LocalConfig()
+    config = DockerComposeConfig()
     engine = init_db(get_db_uri(config))
     return engine
 

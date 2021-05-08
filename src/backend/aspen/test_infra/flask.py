@@ -1,6 +1,6 @@
 import pytest
 
-from aspen.config import TestingConfig
+from aspen.config.testing import TestingConfig
 from aspen.main import application
 
 

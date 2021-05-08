@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import json
 import os
-import platform
 from collections import MutableMapping
 from functools import lru_cache
 from typing import Any, Callable, Mapping, Optional, Set, Type, TypeVar, Union
 
-import boto3
 from botocore.exceptions import ClientError
 
 from aspen import aws
@@ -59,33 +57,24 @@ class Config(object):
     _config_flask_properties: Optional[Set[str]] = None
     _subclasses: MutableMapping[str, Type[Config]] = dict()
 
-    def __init_subclass__(
-        cls: Type[Config], descriptive_name: Optional[str] = None, *args, **kwargs
-    ):
+    def __init_subclass__(cls: Type[Config], *args, **kwargs):
         # the type: ignore on the next line is due to
         # https://github.com/python/mypy/issues/4660
         super().__init_subclass__(*args, **kwargs)  # type: ignore
-        if descriptive_name is not None:
-            Config._subclasses[descriptive_name] = cls
+        # get a list of @flaskproperties for Config and the subclass of Config, and
+        # compare to see if there are any attributes that were marked as
+        # @flaskproperty in Config but not in the subclass.
+        if Config._config_flask_properties is None:
+            Config._config_flask_properties = _get_flaskproperty_names(Config)
+        flask_properties = _get_flaskproperty_names(cls)
 
-            # get a list of @flaskproperties for Config and the subclass of Config, and
-            # compare to see if there are any attributes that were marked as
-            # @flaskproperty in Config but not in the subclass.
-            if Config._config_flask_properties is None:
-                Config._config_flask_properties = _get_flaskproperty_names(Config)
-            flask_properties = _get_flaskproperty_names(cls)
-
-            if not Config._config_flask_properties.issubset(flask_properties):
-                missing_properties = Config._config_flask_properties - flask_properties
-                missing_properties_string = ", ".join(missing_properties)
-                raise Exception(
-                    f"Attributes ({missing_properties_string}) defined as flask properties"
-                    f" in Config but not in {cls.__name__}"
-                )
-
-    @classmethod
-    def by_descriptive_name(cls, descriptive_name: str) -> Config:
-        return Config._subclasses[descriptive_name]()
+        if not Config._config_flask_properties.issubset(flask_properties):
+            missing_properties = Config._config_flask_properties - flask_properties
+            missing_properties_string = ", ".join(missing_properties)
+            raise Exception(
+                f"Attributes ({missing_properties_string}) defined as flask properties"
+                f" in Config but not in {cls.__name__}"
+            )
 
     ####################################################################################
     # AWS secrets
@@ -139,12 +128,12 @@ class Config(object):
         return False
 
     @flaskproperty
-    def SECRET_KEY(self) -> str:
-        return platform.node()
-
-    @flaskproperty
     def TESTING(self) -> bool:
         return False
+
+    @flaskproperty
+    def SECRET_KEY(self) -> str:
+        return self.AWS_SECRET["FLASK_SECRET"]
 
     ####################################################################################
     # auth0 properties
@@ -174,78 +163,37 @@ class Config(object):
 
     @property
     def AUTH0_BASE_URL(self) -> str:
-        try:
-            return self.AWS_SECRET["AUTH0_BASE_URL"]
-        except KeyError:
-            return f"https://{self.AUTH0_DOMAIN}"
+        return self.AWS_SECRET["AUTH0_BASE_URL"]
 
     @property
     def AUTH0_ACCESS_TOKEN_URL(self) -> str:
-        try:
-            return self.AWS_SECRET["AUTH0_ACCESS_TOKEN_URL"]
-        except KeyError:
-            return f"{self.AUTH0_BASE_URL}/oauth/token"
+        return self.AWS_SECRET["AUTH0_ACCESS_TOKEN_URL"]
 
     @property
     def AUTH0_AUTHORIZE_URL(self) -> str:
-        try:
-            return self.AWS_SECRET["AUTH0_AUTHORIZE_URL"]
-        except KeyError:
-            return f"{self.AUTH0_BASE_URL}/authorize"
+        return self.AWS_SECRET["AUTH0_AUTHORIZE_URL"]
 
     @property
     def AUTH0_CLIENT_KWARGS(self) -> Mapping[str, Any]:
-        try:
-            return self.AWS_SECRET["AUTH0_CLIENT_KWARGS"]
-        except KeyError:
-            return {
-                "scope": "openid profile email",
-            }
+        return self.AWS_SECRET["AUTH0_CLIENT_KWARGS"]
 
     @property
     def AUTH0_USERINFO_URL(self) -> str:
-        try:
-            return self.AWS_SECRET["AUTH0_USERINFO_URL"]
-        except KeyError:
-            return "userinfo"
+        return self.AWS_SECRET["AUTH0_USERINFO_URL"]
 
     ####################################################################################
     # database properties
-    @property
-    # TODO: This should be an abstract method as well.
-    def DATABASE_URI(self) -> str:
-        raise NotImplementedError()
-
-    @property
-    def DATABASE_READONLY_URI(self) -> str:
-        raise NotImplementedError()
-
-
-class RemoteDatabaseConfig(Config):
-    """Configuration for running with a remote database."""
-
-    @flaskproperty
-    def SECRET_KEY(self) -> str:
-        return self.AWS_SECRET["FLASK_SECRET"]
-
     @property
     def DATABASE_URI(self) -> str:
         # Allow db uri to be overridden by env var.
         if os.getenv("DB_URI"):
             return os.environ["DB_URI"]
-        username = self.AWS_SECRET["DB.rw_username"]
-        password = self.AWS_SECRET["DB.rw_password"]
-
-        instance_address = None
-        try:
-            instance_address = self.AWS_SECRET["DB.address"]
-        except KeyError:
-            # TODO, remove this fallback when we tear down the old staging env.
-            rds = boto3.client("rds")
-            response = rds.describe_db_instances(DBInstanceIdentifier="aspen-db")
-            instance_info = response["DBInstances"][0]
-            instance_address = instance_info["Endpoint"]["Address"]
-            instance_port = instance_info["Endpoint"]["Port"]
-            instance_address = f"{instance_address}:{instance_port}"
+        username = self.AWS_SECRET["DB/rw_username"]
+        password = self.AWS_SECRET["DB/rw_password"]
+        instance_address = self.AWS_SECRET["DB/address"]
         db_name = os.getenv("REMOTE_DEV_PREFIX") or "/aspen_db"
         return f"postgresql://{username}:{password}@{instance_address}{db_name}"
+
+    @property
+    def DATABASE_READONLY_URI(self) -> str:
+        raise NotImplementedError()
